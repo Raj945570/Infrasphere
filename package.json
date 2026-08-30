@@ -1,0 +1,13 @@
+{
+  "name": "construction-marketplace-design-system",
+  "version": "1.0.0",
+  "description": "A modern SaaS design system and marketplace showcase for a construction platform.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
