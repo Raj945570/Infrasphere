@@ -1,0 +1,35 @@
+[
+  {
+    "id": "user_1788109628542",
+    "name": "Rajesh Sharma",
+    "email": "rajesh@infrasphere.in",
+    "password": "$2b$10$6UD4tzSwZU0ii2fP/TAi7.ypBuYFgTfOn9cMPZiSff.O0REhi9vnu",
+    "phone": "9876543210",
+    "companyName": "Sharma Infrastructure Private Limited",
+    "gstin": "09AABC1234M1Z2",
+    "address": "Sector 62, Noida, Gautam Buddha Nagar, Uttar Pradesh, 201301",
+    "createdAt": "2026-08-30T17:07:08.542Z"
+  },
+  {
+    "id": "user_17881097695655ci78",
+    "name": "Amit Kumar",
+    "email": "amit@infrasphere.in",
+    "password": "$2b$10$ep6/4iorcpucRperb4xhluZFyJucpDSbzSCJhDUMzq/fJIZyFwjLS",
+    "phone": "9876543211",
+    "companyName": "Amit Kumar Enterprises",
+    "gstin": "09AABC3680M1Z2",
+    "address": "Regional Address, India",
+    "createdAt": "2026-08-30T17:09:29.565Z"
+  },
+  {
+    "id": "user_1788109898149lz4k0",
+    "name": "raj mishra",
+    "email": "movies734819@gmail.com",
+    "password": "$2b$10$YEhLr6k27lsAvLT9sn6wMePSS0wBs.C/sEl1EDgKXL1xl2qjGSQg2",
+    "phone": "9455701757",
+    "companyName": "raj mishra Enterprises",
+    "gstin": "09AABC3740M1Z2",
+    "address": "Regional Address, India",
+    "createdAt": "2026-08-30T17:11:38.149Z"
+  }
+]

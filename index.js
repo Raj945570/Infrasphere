@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  initTabs();
-  initMarketplaceSimulation();
-  initMobileResponsiveMenu();
+  initAuthentication();
 });
 
 /* ================= Global State ================= */
@@ -312,20 +310,60 @@ function initMarketplaceSimulation() {
 
   // 8. Profile Setup Updates
   if (profileForm) {
-    profileForm.addEventListener('submit', (e) => {
+    profileForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const contractorName = document.getElementById('profName').value;
       const companyName = document.getElementById('profComp').value;
+      const gstin = document.getElementById('profGST').value;
+      const address = document.getElementById('profAddr').value;
       
-      // Update topbar profile elements dynamically
-      const navUserName = document.querySelector('.navbar .user-name');
-      const navUserRole = document.querySelector('.navbar .user-role');
-      
-      if (navUserName) navUserName.textContent = contractorName;
-      if (navUserRole) navUserRole.textContent = companyName;
+      const submitBtn = profileForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.setAttribute('disabled', 'true');
+      submitBtn.textContent = 'Saving...';
 
-      showToast('Enterprise registration details successfully saved.');
+      try {
+        const token = localStorage.getItem('infrasphere_token');
+        const response = await fetch('/api/profile/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: contractorName,
+            companyName,
+            gstin,
+            address
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to update profile');
+        }
+
+        // Update topbar profile elements dynamically
+        const navUserName = document.querySelector('.navbar .user-name');
+        const navUserRole = document.querySelector('.navbar .user-role');
+        const navAvatar = document.querySelector('.navbar .user-avatar');
+        
+        if (navUserName) navUserName.textContent = data.user.name;
+        if (navUserRole) navUserRole.textContent = data.user.companyName;
+        if (navAvatar) {
+          const initials = data.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          navAvatar.textContent = initials;
+        }
+
+        showToast('Enterprise registration details successfully saved.');
+      } catch (err) {
+        showToast(`Error: ${err.message}`);
+      } finally {
+        submitBtn.removeAttribute('disabled');
+        submitBtn.textContent = originalText;
+      }
     });
   }
 }
@@ -403,4 +441,284 @@ function escapeHtml(string) {
       "'": '&#39;'
     }[s];
   });
+}
+
+/* ================= Authentication System ================= */
+let currentUser = null;
+let isAppInitialized = false;
+
+function initAuthentication() {
+  const authPage = document.getElementById('authPage');
+  const appContainer = document.querySelector('.app-container');
+  const authForm = document.getElementById('authForm');
+  const authSubtitle = document.getElementById('authSubtitle');
+  const fullNameGroup = document.getElementById('fullNameGroup');
+  const authFullNameInput = document.getElementById('authFullName');
+  const phoneGroup = document.getElementById('phoneGroup');
+  const authPhoneInput = document.getElementById('authPhone');
+  const authEmailInput = document.getElementById('authEmail');
+  const authPasswordInput = document.getElementById('authPassword');
+  const authSubmitBtn = document.getElementById('authSubmitBtn');
+  const authToggleLink = document.getElementById('authToggleLink');
+  const authToggleText = document.getElementById('authToggleText');
+  const authAlert = document.getElementById('authAlert');
+  const authAlertMsg = document.getElementById('authAlertMsg');
+  const fillDemoCredsBtn = document.getElementById('fillDemoCredsBtn');
+  const authDemoBadge = document.getElementById('authDemoBadge');
+  const logoutLink = document.getElementById('logoutLink');
+  
+  let isLoginMode = true;
+
+  // Toggle show/hide password
+  const passwordToggleBtn = document.getElementById('passwordToggleBtn');
+  if (passwordToggleBtn && authPasswordInput) {
+    passwordToggleBtn.addEventListener('click', () => {
+      const type = authPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      authPasswordInput.setAttribute('type', type);
+      if (type === 'text') {
+        passwordToggleBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" class="eye-off-icon" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        `;
+      } else {
+        passwordToggleBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" class="eye-icon" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        `;
+      }
+    });
+  }
+
+  // Toggle Mode (Login <-> Signup)
+  if (authToggleLink) {
+    authToggleLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      isLoginMode = !isLoginMode;
+      hideAlert();
+      
+      if (isLoginMode) {
+        authSubtitle.textContent = 'Sign in to your Indian construction portal';
+        fullNameGroup.style.display = 'none';
+        authFullNameInput.removeAttribute('required');
+        phoneGroup.style.display = 'none';
+        authPhoneInput.removeAttribute('required');
+        authSubmitBtn.querySelector('span').textContent = 'Sign In';
+        authToggleText.textContent = 'New to Infrasphere?';
+        authToggleLink.textContent = 'Create an account';
+        authDemoBadge.style.display = 'block';
+      } else {
+        authSubtitle.textContent = 'Register a new contractor account';
+        fullNameGroup.style.display = 'block';
+        authFullNameInput.setAttribute('required', 'true');
+        phoneGroup.style.display = 'block';
+        authPhoneInput.setAttribute('required', 'true');
+        authSubmitBtn.querySelector('span').textContent = 'Create Account';
+        authToggleText.textContent = 'Already have an account?';
+        authToggleLink.textContent = 'Sign In';
+        authDemoBadge.style.display = 'none';
+      }
+    });
+  }
+
+  // Quick fill demo credentials
+  if (fillDemoCredsBtn) {
+    fillDemoCredsBtn.addEventListener('click', () => {
+      authEmailInput.value = 'rajesh@infrasphere.in';
+      authPasswordInput.value = 'sharma123';
+      hideAlert();
+    });
+  }
+
+  // Handle Form Submission
+  if (authForm) {
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const email = authEmailInput.value.trim();
+      const password = authPasswordInput.value;
+      const name = authFullNameInput ? authFullNameInput.value.trim() : '';
+      const phone = authPhoneInput ? authPhoneInput.value.trim() : '';
+
+      // Client Side Validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showAlert('danger', 'Please enter a valid email address.');
+        return;
+      }
+
+      if (password.length < 6) {
+        showAlert('danger', 'Password must be at least 6 characters.');
+        return;
+      }
+
+      if (!isLoginMode && !name) {
+        showAlert('danger', 'Please enter your full name.');
+        return;
+      }
+
+      if (!isLoginMode && (!phone || !/^\d{10}$/.test(phone))) {
+        showAlert('danger', 'Please enter a valid 10-digit phone number.');
+        return;
+      }
+
+      // Enter loading state
+      authSubmitBtn.setAttribute('disabled', 'true');
+      authSubmitBtn.classList.add('btn-loading');
+      const originalBtnText = authSubmitBtn.querySelector('span').textContent;
+      authSubmitBtn.querySelector('span').innerHTML = `<span class="spinner"></span>Processing...`;
+
+      try {
+        const url = isLoginMode ? '/api/auth/login' : '/api/auth/signup';
+        const bodyData = isLoginMode ? { email, password } : { name, email, password, phone };
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        // Success
+        localStorage.setItem('infrasphere_token', data.token);
+        
+        if (!isLoginMode) {
+          showAlert('success', 'Signup successful! Logging you in...');
+          setTimeout(() => {
+            loginUser(data.user);
+          }, 1000);
+        } else {
+          loginUser(data.user);
+        }
+      } catch (err) {
+        showAlert('danger', err.message);
+        authSubmitBtn.removeAttribute('disabled');
+        authSubmitBtn.classList.remove('btn-loading');
+        authSubmitBtn.querySelector('span').textContent = originalBtnText;
+      }
+    });
+  }
+
+  // Logout Handler
+  if (logoutLink) {
+    logoutLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      logoutUser();
+    });
+  }
+
+  // Check Token on Startup
+  const token = localStorage.getItem('infrasphere_token');
+  if (token) {
+    verifyToken(token);
+  } else {
+    // Show login page
+    authPage.style.display = 'flex';
+    appContainer.style.display = 'none';
+  }
+
+  async function verifyToken(authToken) {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error('Session expired');
+      }
+      loginUser(data.user);
+    } catch (err) {
+      console.warn('Re-auth failed:', err.message);
+      logoutUser();
+    }
+  }
+
+  function loginUser(user) {
+    currentUser = user;
+    
+    // Populate layout with user details
+    hydrateUserUI(user);
+
+    // Swap displays
+    authPage.style.display = 'none';
+    appContainer.style.display = 'flex';
+
+    // Reset button states
+    authSubmitBtn.removeAttribute('disabled');
+    authSubmitBtn.classList.remove('btn-loading');
+    authSubmitBtn.querySelector('span').textContent = isLoginMode ? 'Sign In' : 'Create Account';
+
+    // Clear form
+    authForm.reset();
+
+    // Initialize core dashboard ONCE
+    if (!isAppInitialized) {
+      initTabs();
+      initMarketplaceSimulation();
+      initMobileResponsiveMenu();
+      isAppInitialized = true;
+    }
+
+    showToast(`Welcome back, ${user.name}!`);
+  }
+
+  function logoutUser() {
+    currentUser = null;
+    localStorage.removeItem('infrasphere_token');
+    
+    // Swap displays
+    authPage.style.display = 'flex';
+    appContainer.style.display = 'none';
+
+    // Reset form states
+    isLoginMode = true;
+    authSubtitle.textContent = 'Sign in to your Indian construction portal';
+    fullNameGroup.style.display = 'none';
+    phoneGroup.style.display = 'none';
+    authSubmitBtn.querySelector('span').textContent = 'Sign In';
+    authToggleText.textContent = 'New to Infrasphere?';
+    authToggleLink.textContent = 'Create an account';
+    authDemoBadge.style.display = 'block';
+
+    showToast('You have been logged out.');
+  }
+
+  function showAlert(type, message) {
+    authAlert.className = `auth-alert auth-alert-${type}`;
+    authAlertMsg.textContent = message;
+    authAlert.style.display = 'flex';
+  }
+
+  function hideAlert() {
+    authAlert.style.display = 'none';
+  }
+}
+
+function hydrateUserUI(user) {
+  // Update Topbar
+  const navUserName = document.querySelector('.navbar .user-name');
+  const navUserRole = document.querySelector('.navbar .user-role');
+  const navAvatar = document.querySelector('.navbar .user-avatar');
+  
+  if (navUserName) navUserName.textContent = user.name;
+  if (navUserRole) navUserRole.textContent = user.companyName;
+  if (navAvatar) {
+    // Generate initials
+    const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    navAvatar.textContent = initials;
+  }
+
+  // Update Settings Page Inputs
+  const profNameInput = document.getElementById('profName');
+  const profCompInput = document.getElementById('profComp');
+  const profGSTInput = document.getElementById('profGST');
+  const profAddrInput = document.getElementById('profAddr');
+
+  if (profNameInput) profNameInput.value = user.name;
+  if (profCompInput) profCompInput.value = user.companyName;
+  if (profGSTInput) profGSTInput.value = user.gstin;
+  if (profAddrInput) profAddrInput.value = user.address;
 }

@@ -9,6 +9,75 @@
 </head>
 <body>
 
+  <!-- Auth Page Container (Conditional display) -->
+  <div id="authPage" class="auth-page" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-logo-section">
+        <div class="auth-logo">I</div>
+        <h2 class="auth-title">Infrasphere</h2>
+        <p class="auth-subtitle" id="authSubtitle">Sign in to your Indian construction portal</p>
+      </div>
+
+      <!-- Alert Box -->
+      <div id="authAlert" class="auth-alert" style="display: none;">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="authAlertMsg">Error message here</span>
+      </div>
+
+      <!-- Login / Signup Form -->
+      <form id="authForm" class="auth-form">
+        <!-- Full Name (Only visible on Signup) -->
+        <div class="form-group" id="fullNameGroup" style="display: none;">
+          <label class="form-label" for="authFullName">Full Name</label>
+          <input type="text" class="form-input" id="authFullName" placeholder="e.g. Rajesh Sharma">
+        </div>
+
+        <!-- Phone Number (Only visible on Signup) -->
+        <div class="form-group" id="phoneGroup" style="display: none;">
+          <label class="form-label" for="authPhone">Phone Number</label>
+          <input type="tel" class="form-input" id="authPhone" placeholder="10-digit mobile number" maxlength="10">
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label class="form-label" for="authEmail">Email Address</label>
+          <input type="email" class="form-input" id="authEmail" placeholder="e.g. rajesh@infrasphere.in" required>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="authPassword">Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" class="form-input" id="authPassword" placeholder="Minimum 6 characters" required style="padding-right: 44px;">
+            <button type="button" class="password-toggle-btn" id="passwordToggleBtn" aria-label="Toggle Password Visibility">
+              <svg viewBox="0 0 24 24" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-full" id="authSubmitBtn" style="margin-top: 8px;">
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <!-- Demo Login Credentials Helper -->
+      <div class="auth-demo-badge" id="authDemoBadge">
+        <strong>Demo Credentials:</strong><br>
+        Email: <code>rajesh@infrasphere.in</code><br>
+        Password: <code>sharma123</code>
+        <br>
+        <span class="auth-demo-btn" id="fillDemoCredsBtn">Quick Fill Demo Credentials</span>
+      </div>
+
+      <!-- Toggle Mode Link -->
+      <div class="auth-footer">
+        <span id="authToggleText">New to Infrasphere?</span>
+        <a id="authToggleLink">Create an account</a>
+      </div>
+    </div>
+  </div>
+
   <!-- App Main Container -->
   <div class="app-container">
     
@@ -51,6 +120,12 @@
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span>Profile / Settings</span>
         </a>
+        <div class="logout-btn-wrapper">
+          <a class="sidebar-link logout-link" id="logoutLink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Log Out</span>
+          </a>
+        </div>
       </nav>
 
       <div class="sidebar-footer">

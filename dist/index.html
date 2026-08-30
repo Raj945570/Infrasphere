@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infrasphere - Indian Construction Marketplace SaaS</title>
+  <meta name="description" content="A premium responsive SaaS layout for managing construction projects, purchasing structural materials, booking technical consultants, and downloading Vastu CAD designs in India.">
+  <script type="module" crossorigin src="/assets/index-YWIHvaEl.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BnOHzXTy.css">
+</head>
+<body>
+
+  <!-- Auth Page Container (Conditional display) -->
+  <div id="authPage" class="auth-page" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-logo-section">
+        <div class="auth-logo">I</div>
+        <h2 class="auth-title">Infrasphere</h2>
+        <p class="auth-subtitle" id="authSubtitle">Sign in to your Indian construction portal</p>
+      </div>
+
+      <!-- Alert Box -->
+      <div id="authAlert" class="auth-alert" style="display: none;">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="authAlertMsg">Error message here</span>
+      </div>
+
+      <!-- Login / Signup Form -->
+      <form id="authForm" class="auth-form">
+        <!-- Full Name (Only visible on Signup) -->
+        <div class="form-group" id="fullNameGroup" style="display: none;">
+          <label class="form-label" for="authFullName">Full Name</label>
+          <input type="text" class="form-input" id="authFullName" placeholder="e.g. Rajesh Sharma">
+        </div>
+
+        <!-- Phone Number (Only visible on Signup) -->
+        <div class="form-group" id="phoneGroup" style="display: none;">
+          <label class="form-label" for="authPhone">Phone Number</label>
+          <input type="tel" class="form-input" id="authPhone" placeholder="10-digit mobile number" maxlength="10">
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label class="form-label" for="authEmail">Email Address</label>
+          <input type="email" class="form-input" id="authEmail" placeholder="e.g. rajesh@infrasphere.in" required>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="authPassword">Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" class="form-input" id="authPassword" placeholder="Minimum 6 characters" required style="padding-right: 44px;">
+            <button type="button" class="password-toggle-btn" id="passwordToggleBtn" aria-label="Toggle Password Visibility">
+              <svg viewBox="0 0 24 24" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-full" id="authSubmitBtn" style="margin-top: 8px;">
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <!-- Demo Login Credentials Helper -->
+      <div class="auth-demo-badge" id="authDemoBadge">
+        <strong>Demo Credentials:</strong><br>
+        Email: <code>rajesh@infrasphere.in</code><br>
+        Password: <code>sharma123</code>
+        <br>
+        <span class="auth-demo-btn" id="fillDemoCredsBtn">Quick Fill Demo Credentials</span>
+      </div>
+
+      <!-- Toggle Mode Link -->
+      <div class="auth-footer">
+        <span id="authToggleText">New to Infrasphere?</span>
+        <a id="authToggleLink">Create an account</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Main Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar Component -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">I</div>
+        <span class="brand-text">Infrasphere</span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <div class="menu-title">Main Portal</div>
+        
+        <a class="sidebar-link active" data-tab="dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a class="sidebar-link" data-tab="projects">
+          <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span>Projects</span>
+        </a>
+
+        <a class="sidebar-link" data-tab="consultants">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Consultants</span>
+        </a>
+
+        <a class="sidebar-link" data-tab="shop">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span>Shop Materials</span>
+        </a>
+
+        <a class="sidebar-link" data-tab="designs">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          <span>Designs Catalog</span>
+        </a>
+
+        <a class="sidebar-link" data-tab="profile">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Profile / Settings</span>
+        </a>
+        <div class="logout-btn-wrapper">
+          <a class="sidebar-link logout-link" id="logoutLink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Log Out</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-link" id="mobileCloseLink">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>Collapse Sidebar</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area Wrapper -->
+    <div class="main-wrapper">
+      
+      <!-- Top Navbar Component -->
+      <header class="navbar">
+        <div class="flex items-center gap-16">
+          <button class="btn btn-secondary btn-icon-only" id="mobileMenuBtn" style="display: none;">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="navbar-search">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Search projects, shop, consultants..." id="globalSearch">
+          </div>
+        </div>
+
+        <div class="navbar-actions">
+          <!-- Light/Dark Mode Switcher -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+            <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
+
+          <!-- User Widget (Indian Contractor) -->
+          <div class="nav-user" onclick="switchTabDirect('profile')">
+            <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">RS</div>
+            <div class="user-info">
+              <span class="user-name">Rajesh Sharma</span>
+              <span class="user-role">Sharma Infra Projects</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Canvas Container -->
+      <main class="content-container">
+
+        <!-- ================= TAB 1: DASHBOARD ================= -->
+        <section class="tab-content active" id="tab-dashboard">
+          <div class="mb-32">
+            <h1>Construction Dashboard</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Real-time procurement trackers, logistics summaries, and active technical audits.</p>
+          </div>
+
+          <!-- KPI Cards Ribbon -->
+          <div class="dashboard-grid">
+            <div class="card stat-card">
+              <div class="stat-icon" style="background-color: var(--primary-glow); color: var(--primary);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-number" id="kpiProcurement">₹18,45,000</span>
+                <span class="stat-label">Total Procurement</span>
+              </div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-icon" style="background-color: var(--accent-glow); color: var(--accent);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-number" id="kpiProjects">4</span>
+                <span class="stat-label">Active Projects</span>
+              </div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-number" id="kpiConsultants">3</span>
+                <span class="stat-label">Experts Booked</span>
+              </div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-number" id="kpiCart">0</span>
+                <span class="stat-label">Items in Cart</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Split Dashboard Row -->
+          <div class="marketplace-layout-grid">
+            
+            <!-- Left Side: Recent Purchase Orders -->
+            <div>
+              <div class="marketplace-section-title">
+                <h2>Recent Material Shipments</h2>
+                <button class="btn btn-outline btn-sm" onclick="switchTabDirect('shop')">Open Store</button>
+              </div>
+
+              <div class="card">
+                <div class="custom-table-container" style="margin-top: 0;">
+                  <table class="custom-table">
+                    <thead>
+                      <tr>
+                        <th>PO Reference</th>
+                        <th>Material Description</th>
+                        <th>Supplier</th>
+                        <th>Total Cost</th>
+                        <th>Logistics Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>PO-2026-081</strong></td>
+                        <td>Tata Tiscon 550D Rebar (12 Tons)</td>
+                        <td>Tata Steel Regional Dist.</td>
+                        <td>₹6,78,000</td>
+                        <td><span class="badge badge-success">Out for Delivery</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong>PO-2026-079</strong></td>
+                        <td>UltraTech Premium Cement (500 Bags)</td>
+                        <td>UltraTech Cement Depot Noida</td>
+                        <td>₹2,05,000</td>
+                        <td><span class="badge badge-info">Delivered</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong>PO-2026-075</strong></td>
+                        <td>Havells 3-Core Copper Cable (20 Coils)</td>
+                        <td>Havells India Ltd Distributor</td>
+                        <td>₹1,78,000</td>
+                        <td><span class="badge badge-info">Delivered</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong>PO-2026-072</strong></td>
+                        <td>Astral Silencio Sewer Pipe (50 Joints)</td>
+                        <td>Astral Pipes Ltd Warehouse</td>
+                        <td>₹1,60,000</td>
+                        <td><span class="badge badge-warning">Staged at Port</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Active Project Locations -->
+            <div>
+              <div class="marketplace-section-title">
+                <h2>Active Sites</h2>
+                <button class="btn btn-outline btn-sm" onclick="switchTabDirect('projects')">All Tenders</button>
+              </div>
+
+              <div class="flex flex-col gap-16">
+                <!-- Location 1 -->
+                <div class="card" style="padding: 16px;">
+                  <div class="flex justify-between items-center mb-8">
+                    <h4 style="font-size: 14px;">Bangalore Metro Phase 2</h4>
+                    <span class="badge badge-success">Active</span>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-muted);">Underground high-tension utility cabling and ducting.</p>
+                  <p style="font-size: 11px; font-weight: 600; margin-top: 8px; color: var(--primary);">Budget: ₹1,20,00,000</p>
+                </div>
+
+                <!-- Location 2 -->
+                <div class="card" style="padding: 16px;">
+                  <div class="flex justify-between items-center mb-8">
+                    <h4 style="font-size: 14px;">Dwarka Expressway Sec-4</h4>
+                    <span class="badge badge-success">Active</span>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-muted);">Reinforced concrete foundation pouring and quality testing.</p>
+                  <p style="font-size: 11px; font-weight: 600; margin-top: 8px; color: var(--primary);">Budget: ₹45,00,000</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ================= TAB 2: PROJECTS (TENDERS) ================= -->
+        <section class="tab-content" id="tab-projects">
+          <div class="flex justify-between items-center mb-32" style="flex-wrap: wrap; gap: 16px;">
+            <div>
+              <h1>Indian Construction Tenders</h1>
+              <p style="color: var(--text-muted); margin-top: 8px;">Submit bids, manage subcontracts, and post active site requirement briefs.</p>
+            </div>
+            <button class="btn btn-primary" id="openBidModalBtn">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Publish Tenders RFQ</span>
+            </button>
+          </div>
+
+          <div class="marketplace-layout-grid">
+            <!-- Left Side: Tender lists -->
+            <div>
+              <div class="marketplace-section-title">
+                <h2>Open Tender RFQs</h2>
+                <div class="flex gap-8">
+                  <button class="btn btn-secondary btn-sm" id="btnFilterAll">All Categories</button>
+                  <button class="btn btn-outline btn-sm" id="btnFilterConcrete">Concrete</button>
+                  <button class="btn btn-outline btn-sm" id="btnFilterCabling">Utility/Cabling</button>
+                </div>
+              </div>
+
+              <div class="bids-list" id="projectsContainer">
+                
+                <!-- Project 1 -->
+                <div class="card bid-item-card" data-category="concrete">
+                  <div class="bid-header">
+                    <div>
+                      <h3 style="margin-bottom: 4px;">Dwarka Expressway Foundation Pouring</h3>
+                      <p style="color: var(--text-muted); font-size: 13px; font-weight: 500;">Sector 111 Site — Gurgaon Corridor</p>
+                    </div>
+                    <span class="badge badge-warning">Awaiting Tenders</span>
+                  </div>
+                  <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+                    Required slab-grade concrete pouring of 14,000 sq ft. Heavy reinforcement rebar placement and concrete grade M35/M40. Bids must include logistics and batching plant approvals from NHAI.
+                  </p>
+                  <div class="bid-meta">
+                    <div class="bid-meta-item">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      <span>Starts: Sep 24, 2026</span>
+                    </div>
+                    <div class="bid-meta-item">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>Gurugram, Haryana</span>
+                    </div>
+                    <div class="bid-meta-item">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4.5"/></svg>
+                      <span>4 Bids Registered</span>
+                    </div>
+                  </div>
+                  <div class="bid-footer">
+                    <div>
+                      <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">ESTIMATED VALUE</span>
+                      <span class="bid-price" style="color: var(--primary);">₹45,00,000</span>
+                    </div>
+                    <div class="bid-actions">
+                      <button class="btn btn-outline btn-submit-tender">Place Bid</button>
+                      <button class="btn btn-primary">Review RFQ</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="card bid-item-card" data-category="cabling">
+                  <div class="bid-header">
+                    <div>
+                      <h3 style="margin-bottom: 4px;">Bangalore Metro Phase 2 Cabling</h3>
+                      <p style="color: var(--text-muted); font-size: 13px; font-weight: 500;">Dairy Circle to Nagawara Underground Route</p>
+                    </div>
+                    <span class="badge badge-success">Contract Finalized</span>
+                  </div>
+                  <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+                    Laying and splicing of 11KV high-tension distribution lines inside precast utility ducts. Work requires compliance with Bescom and BMRCL safety guidelines. Pre-certified contractors only.
+                  </p>
+                  <div class="bid-meta">
+                    <div class="bid-meta-item">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      <span>Starts: Oct 12, 2026</span>
+                    </div>
+                    <div class="bid-meta-item">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>Bengaluru, Karnataka</span>
+                    </div>
+                    <div class="bid-meta-item">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4.5"/></svg>
+                      <span>Partner: L&T Infra</span>
+                    </div>
+                  </div>
+                  <div class="bid-footer">
+                    <div>
+                      <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">CONTRACT VALUE</span>
+                      <span class="bid-price" style="color: var(--primary);">₹1,20,00,000</span>
+                    </div>
+                    <div class="bid-actions">
+                      <button class="btn btn-secondary" disabled>Bids Closed</button>
+                      <button class="btn btn-outline">View Details</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Right Side: Sticky RFQ Form -->
+            <div>
+              <div class="card" style="position: sticky; top: 96px;">
+                <h3 class="card-title">Publish Tender Brief</h3>
+                <p class="card-subtitle">Broadcast your site requirements to pre-verified subcontractors.</p>
+                <form id="tenderForm">
+                  <div class="form-group">
+                    <label class="form-label" for="tenTitle">Project Title</label>
+                    <input type="text" class="form-input" id="tenTitle" placeholder="e.g. Electrical Main Grid Splicing" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="tenLocation">Location (City, State)</label>
+                    <input type="text" class="form-input" id="tenLocation" placeholder="e.g. Mumbai, Maharashtra" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="tenCategory">Division Classification</label>
+                    <select class="form-select" id="tenCategory" required>
+                      <option value="concrete">Concrete & Reinforcement</option>
+                      <option value="cabling">Utility & High-Tension Cabling</option>
+                      <option value="metals">Structural Steel Framing</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="tenBudget">Tender Budget Estimate (INR)</label>
+                    <input type="text" class="form-input" id="tenBudget" placeholder="e.g. ₹35,00,000" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="tenDesc">RFQ Brief</label>
+                    <textarea class="form-textarea" id="tenDesc" placeholder="Scope of materials, timeline, and certifications required..." required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-full" style="margin-top: 8px;">Publish RFQ</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= TAB 3: CONSULTANTS ================= -->
+        <section class="tab-content" id="tab-consultants">
+          <div class="mb-32">
+            <h1>Technical Consultants & Engineers</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Book hours with certified structural engineers, MEP design heads, and Vastu architects.</p>
+          </div>
+
+          <div class="consultants-grid">
+            <!-- Consultant 1 -->
+            <div class="card consultant-card">
+              <div class="consultant-avatar">SR</div>
+              <span class="consultant-specialty">Structural Engineering</span>
+              <h3 style="margin-bottom: 4px;">Dr. Sanjay Rao</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 8px; font-weight: 500;">IIT Bombay Alumnus • 22 Yrs Exp</p>
+              <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+                Expertise in high-rise RCC frames, seismological audits, soil load capacity evaluation, and safety compliance checks.
+              </p>
+              <div class="flex justify-between items-center w-full mt-auto pt-16" style="border-top: 1px solid var(--border-color);">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block; font-weight: 600;">CONSULTING RATE</span>
+                  <span style="font-weight: 700; font-size: 18px; color: var(--text-main);">₹5,000 / hr</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-book" data-name="Dr. Sanjay Rao" data-rate="₹5,000">Book Session</button>
+              </div>
+            </div>
+
+            <!-- Consultant 2 -->
+            <div class="card consultant-card">
+              <div class="consultant-avatar">PI</div>
+              <span class="consultant-specialty">Vastu & Space Design</span>
+              <h3 style="margin-bottom: 4px;">Priya Iyer</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 8px; font-weight: 500;">SPA Delhi Graduate • 12 Yrs Exp</p>
+              <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+                Bespoke residential architectural flow plans integrated with cosmic energy layouts and spatial geometry planning.
+              </p>
+              <div class="flex justify-between items-center w-full mt-auto pt-16" style="border-top: 1px solid var(--border-color);">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block; font-weight: 600;">CONSULTING RATE</span>
+                  <span style="font-weight: 700; font-size: 18px; color: var(--text-main);">₹3,500 / hr</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-book" data-name="Priya Iyer" data-rate="₹3,500">Book Session</button>
+              </div>
+            </div>
+
+            <!-- Consultant 3 -->
+            <div class="card consultant-card">
+              <div class="consultant-avatar">RV</div>
+              <span class="consultant-specialty">MEP & HVAC Specialist</span>
+              <h3 style="margin-bottom: 4px;">Rajesh Varma</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 8px; font-weight: 500;">NIT Trichy • 16 Yrs Exp</p>
+              <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+                Design calculations for variable refrigerant HVAC installations, site plumbing layout staging, and fire grid hookups.
+              </p>
+              <div class="flex justify-between items-center w-full mt-auto pt-16" style="border-top: 1px solid var(--border-color);">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block; font-weight: 600;">CONSULTING RATE</span>
+                  <span style="font-weight: 700; font-size: 18px; color: var(--text-main);">₹4,000 / hr</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-book" data-name="Rajesh Varma" data-rate="₹4,000">Book Session</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= TAB 4: SHOP ================= -->
+        <section class="tab-content" id="tab-shop">
+          <div class="mb-32">
+            <h1>Industrial Materials Shop</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Order structural steel, grade concrete, premium wirings and plumbing fittings from verified Indian brands.</p>
+          </div>
+
+          <div class="shop-grid">
+            <!-- Product 1 -->
+            <div class="card shop-card">
+              <div class="shop-card-img" style="background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%); color: #4338CA;">TATA TISCON 550D</div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Tata Tiscon 550D Rebar</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Premium high-strength steel rebar for concrete reinforcement.</p>
+              <div class="flex justify-between items-center mt-auto">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block;">UNIT RATE</span>
+                  <span style="font-weight: 700; font-size: 16px; color: var(--text-main);">₹56,500 / Ton</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-add-cart" data-id="TISCON-550D" data-name="Tata Tiscon 550D Rebar" data-price="56500">Add to Cart</button>
+              </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="card shop-card">
+              <div class="shop-card-img" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #B45309;">ULTRATECH PREMIUM</div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">UltraTech Premium Cement</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Premium grade structural binder for foundation slabs and beams.</p>
+              <div class="flex justify-between items-center mt-auto">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block;">UNIT RATE</span>
+                  <span style="font-weight: 700; font-size: 16px; color: var(--text-main);">₹410 / Bag</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-add-cart" data-id="ULTRATECH-BAG" data-name="UltraTech Premium Cement" data-price="410">Add to Cart</button>
+              </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="card shop-card">
+              <div class="shop-card-img" style="background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); color: #047857;">ASTRAL SILENCIO</div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Astral Silencio Sewer Pipe</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Low-noise 3-layered mineral filled PP acoustic pipes.</p>
+              <div class="flex justify-between items-center mt-auto">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block;">UNIT RATE</span>
+                  <span style="font-weight: 700; font-size: 16px; color: var(--text-main);">₹3,200 / Joint</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-add-cart" data-id="ASTRAL-SIL" data-name="Astral Silencio Sewer Pipe" data-price="3200">Add to Cart</button>
+              </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="card shop-card">
+              <div class="shop-card-img" style="background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%); color: #0369A1;">HAVELLS flexible</div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Havells 3-Core Copper Cable</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Heavy-duty 4.0 sq mm flexible flame retardant copper wire.</p>
+              <div class="flex justify-between items-center mt-auto">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block;">UNIT RATE</span>
+                  <span style="font-weight: 700; font-size: 16px; color: var(--text-main);">₹8,900 / Coil</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-add-cart" data-id="HAVELLS-3C" data-name="Havells 3-Core Copper Cable" data-price="8900">Add to Cart</button>
+              </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="card shop-card">
+              <div class="shop-card-img" style="background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%); color: #6B21A8;">KAJARIA CERAMIC</div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Kajaria Ceramic Tiles</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Grade-A glazed vitrified tiles for kitchen and bathroom floorings.</p>
+              <div class="flex justify-between items-center mt-auto">
+                <div>
+                  <span style="font-size: 11px; color: var(--text-muted); display: block;">UNIT RATE</span>
+                  <span style="font-weight: 700; font-size: 16px; color: var(--text-main);">₹95 / Sq Ft</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-add-cart" data-id="KAJARIA-VTR" data-name="Kajaria Ceramic Tiles" data-price="95">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= TAB 5: DESIGNS ================= -->
+        <section class="tab-content" id="tab-designs">
+          <div class="mb-32">
+            <h1>Blueprint & CAD Catalog</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Pre-approved floorplans, Vastu house drawings, and structural CAD files for immediate site deployment.</p>
+          </div>
+
+          <div class="designs-grid">
+            <!-- Design 1 -->
+            <div class="card design-card">
+              <div class="design-card-preview">
+                <div class="design-blueprint-mesh"></div>
+                <span style="font-family: monospace; font-size: 11px; z-index: 10; background: var(--bg-card); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">3BHK_VASTU.DWG</span>
+              </div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">3BHK Vastu-Compliant Villa Plan</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px; line-height: 1.4;">
+                Full residential blueprints layout (2,400 Sq Ft floor area). Architect-signed files including plumbing maps, wall sections, and electrical sockets staging.
+              </p>
+              <div class="flex justify-between items-center mt-auto pt-12" style="border-top: 1px solid var(--border-color);">
+                <span style="font-weight: 700; font-size: 18px; color: var(--text-main);">₹12,500</span>
+                <button class="btn btn-primary btn-sm btn-buy-design" data-name="3BHK Vastu Villa Plan" data-price="₹12,500">Purchase CAD</button>
+              </div>
+            </div>
+
+            <!-- Design 2 -->
+            <div class="card design-card">
+              <div class="design-card-preview">
+                <div class="design-blueprint-mesh"></div>
+                <span style="font-family: monospace; font-size: 11px; z-index: 10; background: var(--bg-card); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">OFFICE_FRAMING.DWG</span>
+              </div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Commercial Office Framing CAD</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px; line-height: 1.4;">
+                CAD design framing package for a 5,000 Sq Ft open co-working office. Includes structural load ratings, seismic connection joints, and stairwell details.
+              </p>
+              <div class="flex justify-between items-center mt-auto pt-12" style="border-top: 1px solid var(--border-color);">
+                <span style="font-weight: 700; font-size: 18px; color: var(--text-main);">₹38,000</span>
+                <button class="btn btn-primary btn-sm btn-buy-design" data-name="Commercial Office Framing CAD" data-price="₹38,000">Purchase CAD</button>
+              </div>
+            </div>
+
+            <!-- Design 3 -->
+            <div class="card design-card">
+              <div class="design-card-preview">
+                <div class="design-blueprint-mesh"></div>
+                <span style="font-family: monospace; font-size: 11px; z-index: 10; background: var(--bg-card); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">RCC_RETAINING.PDF</span>
+              </div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">RCC Retaining Wall Detail Drawing</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px; line-height: 1.4;">
+                Standard civil engineering details for 3m to 6m soil retaining wall structures. Grade FE500 reinforcement schemes and weep-hole layout models.
+              </p>
+              <div class="flex justify-between items-center mt-auto pt-12" style="border-top: 1px solid var(--border-color);">
+                <span style="font-weight: 700; font-size: 18px; color: var(--text-main);">₹5,500</span>
+                <button class="btn btn-primary btn-sm btn-buy-design" data-name="RCC Retaining Wall Detail Drawing" data-price="₹5,500">Purchase CAD</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= TAB 6: PROFILE & SETTINGS ================= -->
+        <section class="tab-content" id="tab-profile">
+          <div class="mb-32">
+            <h1>Profile & Contractor Settings</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Manage corporate registrations, GSTIN tags, billing files, and regional contractor profiles.</p>
+          </div>
+
+          <div class="profile-grid">
+            <!-- Left Side: Registration Profile Form -->
+            <div class="card">
+              <h3 class="card-title">Corporate Registration</h3>
+              <p class="card-subtitle">Verified tax and enterprise details for B2B billing.</p>
+              
+              <form id="profileForm">
+                <div class="form-group">
+                  <label class="form-label" for="profName">Principal Contractor Name</label>
+                  <input type="text" class="form-input" id="profName" value="Rajesh Sharma" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profComp">Enterprise Legal Entity</label>
+                  <input type="text" class="form-input" id="profComp" value="Sharma Infrastructure Private Limited" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profGST">GSTIN (Indian Goods & Services Tax Number)</label>
+                  <div class="flex gap-8 items-center">
+                    <input type="text" class="form-input" id="profGST" value="09AABC1234M1Z2" style="font-family: monospace; font-weight: 600;" required>
+                    <span class="gst-badge">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span>GST_Verified</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profAddr">Registered Address</label>
+                  <textarea class="form-textarea" id="profAddr" required>Sector 62, Noida, Gautam Buddha Nagar, Uttar Pradesh, 201301</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 12px;">Save Profile Changes</button>
+              </form>
+            </div>
+
+            <!-- Right Side: Bank & Security Details -->
+            <div class="profile-info-section">
+              <div class="card">
+                <h3 class="card-title">Escrow Bank Details</h3>
+                <p class="card-subtitle">Linked account for processing marketplace milestone payouts.</p>
+                
+                <div class="token-row"><span>Bank Name</span><span class="token-value" style="font-weight: 600;">HDFC Bank Limited</span></div>
+                <div class="token-row"><span>Account Branch</span><span class="token-value">Sector 62 Noida Branch</span></div>
+                <div class="token-row"><span>IFSC Code</span><span class="token-value" style="font-family: monospace;">HDFC0000123</span></div>
+                <div class="token-row"><span>Milestone Wallet</span><span class="token-value" style="font-weight: 700; color: var(--success);">Verified (Active)</span></div>
+              </div>
+
+              <div class="card">
+                <h3 class="card-title">Vendor Classification</h3>
+                <p class="card-subtitle">Marketplace divisions where your profile shows up to clients.</p>
+                
+                <div class="flex flex-wrap gap-8" style="margin-top: 8px;">
+                  <span class="badge badge-info">Class-A Contractor</span>
+                  <span class="badge badge-success">Civil Works</span>
+                  <span class="badge badge-success">Structural Foundations</span>
+                  <span class="badge badge-warning">MEP Services</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- System Notification Banner -->
+      <div id="toastNotification" style="position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 12px 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); font-weight: 500; font-size: 14px; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 1000; pointer-events: none;">
+        Notification text
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
