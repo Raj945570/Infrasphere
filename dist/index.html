@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Infrasphere - Indian Construction Marketplace SaaS</title>
   <meta name="description" content="A premium responsive SaaS layout for managing construction projects, purchasing structural materials, booking technical consultants, and downloading Vastu CAD designs in India.">
-  <script type="module" crossorigin src="/assets/index-DdfU5fb_.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-dFICS-K8.css">
+  <script type="module" crossorigin src="/assets/index-D3UOGKKs.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BUpcp1K4.css">
 </head>
 <body>
 
@@ -146,7 +146,7 @@
       <div class="auth-logo-section">
         <div class="auth-logo">I</div>
         <h2 class="auth-title">Infrasphere</h2>
-        <p class="auth-subtitle" id="authSubtitle">Sign in to your Indian construction portal</p>
+        <p class="auth-subtitle" id="authSubtitle">Enter your credentials to continue</p>
       </div>
 
       <!-- Alert Box -->
@@ -179,7 +179,7 @@
         <div class="form-group">
           <label class="form-label" for="authPassword">Password</label>
           <div class="password-input-wrapper">
-            <input type="password" class="form-input" id="authPassword" placeholder="Minimum 6 characters" required style="padding-right: 44px;">
+            <input type="password" class="form-input" id="authPassword" placeholder="Enter your password" required style="padding-right: 44px;">
             <button type="button" class="password-toggle-btn" id="passwordToggleBtn" aria-label="Toggle Password Visibility">
               <svg viewBox="0 0 24 24" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
@@ -191,15 +191,6 @@
           <span>Sign In</span>
         </button>
       </form>
-
-      <!-- Demo Login Credentials Helper -->
-      <div class="auth-demo-badge" id="authDemoBadge">
-        <strong>Demo Credentials:</strong><br>
-        Email: <code>rajesh@infrasphere.in</code><br>
-        Password: <code>sharma123</code>
-        <br>
-        <span class="auth-demo-btn" id="fillDemoCredsBtn">Quick Fill Demo Credentials</span>
-      </div>
 
       <!-- Toggle Mode Link -->
       <div class="auth-footer">
@@ -305,9 +296,22 @@
 
         <!-- ================= TAB 1: DASHBOARD ================= -->
         <section class="tab-content active" id="tab-dashboard">
-          <div class="mb-32">
-            <h1>Construction Dashboard</h1>
-            <p style="color: var(--text-muted); margin-top: 8px;">Real-time procurement trackers, logistics summaries, and active technical audits.</p>
+          <!-- Dynamic Welcome Section -->
+          <div class="dashboard-welcome-banner mb-32">
+            <div class="welcome-text">
+              <h1 id="welcomeUserHeading">Welcome back, <span class="gradient-text" id="dashboardUserName">Rajesh Sharma</span> 👋</h1>
+              <p class="welcome-subtext" id="dashboardUserSubtext">Here is a real-time overview of your Indian site operations, active tenders, material logistics, and expert sessions.</p>
+            </div>
+            <div class="welcome-quick-actions">
+              <button class="btn btn-outline btn-sm" onclick="switchTabDirect('projects')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                <span>New RFQ Brief</span>
+              </button>
+              <button class="btn btn-primary btn-sm" onclick="switchTabDirect('shop')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span>Order Supplies</span>
+              </button>
+            </div>
           </div>
 
           <!-- KPI Cards Ribbon -->
@@ -319,6 +323,7 @@
               <div class="stat-details">
                 <span class="stat-number" id="kpiProcurement">₹18,45,000</span>
                 <span class="stat-label">Total Procurement</span>
+                <span class="stat-trend badge badge-success" style="margin-top: 6px; width: fit-content; font-size: 11px;">+14.8% this month</span>
               </div>
             </div>
 
@@ -329,26 +334,29 @@
               <div class="stat-details">
                 <span class="stat-number" id="kpiProjects">4</span>
                 <span class="stat-label">Active Projects</span>
+                <span class="stat-trend badge badge-info" style="margin-top: 6px; width: fit-content; font-size: 11px;">2 Tenders in Review</span>
               </div>
             </div>
 
             <div class="card stat-card">
               <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
               </div>
               <div class="stat-details">
-                <span class="stat-number" id="kpiConsultants">3</span>
-                <span class="stat-label">Experts Booked</span>
+                <span class="stat-number" id="kpiOrders">12</span>
+                <span class="stat-label">Material Orders</span>
+                <span class="stat-trend badge badge-success" style="margin-top: 6px; width: fit-content; font-size: 11px;">3 Out for Delivery</span>
               </div>
             </div>
 
             <div class="card stat-card">
               <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
               </div>
               <div class="stat-details">
-                <span class="stat-number" id="kpiCart">0</span>
-                <span class="stat-label">Items in Cart</span>
+                <span class="stat-number" id="kpiConsultants">3</span>
+                <span class="stat-label">Expert Requests</span>
+                <span class="stat-trend badge badge-warning" style="margin-top: 6px; width: fit-content; font-size: 11px;">1 Session Today</span>
               </div>
             </div>
           </div>
@@ -410,34 +418,90 @@
               </div>
             </div>
 
-            <!-- Right Side: Active Project Locations -->
-            <div>
-              <div class="marketplace-section-title">
-                <h2>Active Sites</h2>
-                <button class="btn btn-outline btn-sm" onclick="switchTabDirect('projects')">All Tenders</button>
+            <!-- Right Side: Recent Activity & Active Sites -->
+            <div class="flex flex-col gap-24">
+              
+              <!-- Recent Activity Feed -->
+              <div>
+                <div class="marketplace-section-title">
+                  <h2>Recent Activity</h2>
+                  <span class="badge badge-info" style="font-size: 11px;">Live Feed</span>
+                </div>
+                
+                <div class="card" style="padding: 20px;">
+                  <div class="activity-timeline">
+                    <div class="activity-item">
+                      <div class="activity-dot" style="background: var(--success);"></div>
+                      <div class="activity-body">
+                        <p class="activity-title">Tata Tiscon Rebar dispatched</p>
+                        <p class="activity-desc">12 Tons in transit via Delhi-Jaipur Corridor</p>
+                        <span class="activity-time">12 mins ago</span>
+                      </div>
+                    </div>
+                    <div class="activity-item">
+                      <div class="activity-dot" style="background: var(--primary);"></div>
+                      <div class="activity-body">
+                        <p class="activity-title">New tender bid received</p>
+                        <p class="activity-desc">L&T Infrastructure quoted ₹1.18 Cr for Bangalore Metro</p>
+                        <span class="activity-time">1 hour ago</span>
+                      </div>
+                    </div>
+                    <div class="activity-item">
+                      <div class="activity-dot" style="background: var(--accent);"></div>
+                      <div class="activity-body">
+                        <p class="activity-title">Dr. Sanjay Rao uploaded audit</p>
+                        <p class="activity-desc">Seismic compliance report ready for Dwarka site</p>
+                        <span class="activity-time">3 hours ago</span>
+                      </div>
+                    </div>
+                    <div class="activity-item">
+                      <div class="activity-dot" style="background: var(--warning);"></div>
+                      <div class="activity-body">
+                        <p class="activity-title">RERA verification approved</p>
+                        <p class="activity-desc">Sector 150 Noida Commercial site deeds cleared</p>
+                        <span class="activity-time">Yesterday</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="flex flex-col gap-16">
-                <!-- Location 1 -->
-                <div class="card" style="padding: 16px;">
-                  <div class="flex justify-between items-center mb-8">
-                    <h4 style="font-size: 14px;">Bangalore Metro Phase 2</h4>
-                    <span class="badge badge-success">Active</span>
-                  </div>
-                  <p style="font-size: 12px; color: var(--text-muted);">Underground high-tension utility cabling and ducting.</p>
-                  <p style="font-size: 11px; font-weight: 600; margin-top: 8px; color: var(--primary);">Budget: ₹1,20,00,000</p>
+              <!-- Active Sites -->
+              <div>
+                <div class="marketplace-section-title">
+                  <h2>Active Sites</h2>
+                  <button class="btn btn-outline btn-sm" onclick="switchTabDirect('projects')">All Tenders</button>
                 </div>
 
-                <!-- Location 2 -->
-                <div class="card" style="padding: 16px;">
-                  <div class="flex justify-between items-center mb-8">
-                    <h4 style="font-size: 14px;">Dwarka Expressway Sec-4</h4>
-                    <span class="badge badge-success">Active</span>
+                <div class="flex flex-col gap-16">
+                  <!-- Location 1 -->
+                  <div class="card" style="padding: 16px;">
+                    <div class="flex justify-between items-center mb-8">
+                      <h4 style="font-size: 14px;">Bangalore Metro Phase 2</h4>
+                      <span class="badge badge-success">Active</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted);">Underground high-tension utility cabling and ducting.</p>
+                    <div class="flex justify-between items-center mt-8">
+                      <span style="font-size: 11px; font-weight: 600; color: var(--primary);">Budget: ₹1,20,00,000</span>
+                      <span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">68% Completed</span>
+                    </div>
                   </div>
-                  <p style="font-size: 12px; color: var(--text-muted);">Reinforced concrete foundation pouring and quality testing.</p>
-                  <p style="font-size: 11px; font-weight: 600; margin-top: 8px; color: var(--primary);">Budget: ₹45,00,000</p>
+
+                  <!-- Location 2 -->
+                  <div class="card" style="padding: 16px;">
+                    <div class="flex justify-between items-center mb-8">
+                      <h4 style="font-size: 14px;">Dwarka Expressway Sec-4</h4>
+                      <span class="badge badge-success">Active</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted);">Reinforced concrete foundation pouring and quality testing.</p>
+                    <div class="flex justify-between items-center mt-8">
+                      <span style="font-size: 11px; font-weight: 600; color: var(--primary);">Budget: ₹45,00,000</span>
+                      <span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">32% Completed</span>
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </div>
 
           </div>

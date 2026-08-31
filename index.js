@@ -154,13 +154,12 @@ function toggleAuthMode(isSignup) {
   const authSubmitBtn = document.getElementById('authSubmitBtn');
   const authToggleText = document.getElementById('authToggleText');
   const authToggleLink = document.getElementById('authToggleLink');
-  const authDemoBadge = document.getElementById('authDemoBadge');
   const authAlert = document.getElementById('authAlert');
 
   if (authAlert) authAlert.style.display = 'none';
 
   if (!isSignup) {
-    if (authSubtitle) authSubtitle.textContent = 'Sign in to your Indian construction portal';
+    if (authSubtitle) authSubtitle.textContent = 'Enter your credentials to continue';
     if (fullNameGroup) fullNameGroup.style.display = 'none';
     if (authFullNameInput) authFullNameInput.removeAttribute('required');
     if (phoneGroup) phoneGroup.style.display = 'none';
@@ -171,7 +170,6 @@ function toggleAuthMode(isSignup) {
       authToggleLink.textContent = 'Create an account';
       authToggleLink.setAttribute('href', '/signup');
     }
-    if (authDemoBadge) authDemoBadge.style.display = 'block';
   } else {
     if (authSubtitle) authSubtitle.textContent = 'Register a new contractor account';
     if (fullNameGroup) fullNameGroup.style.display = 'block';
@@ -184,7 +182,6 @@ function toggleAuthMode(isSignup) {
       authToggleLink.textContent = 'Sign In';
       authToggleLink.setAttribute('href', '/login');
     }
-    if (authDemoBadge) authDemoBadge.style.display = 'none';
   }
 }
 
@@ -622,8 +619,6 @@ function initAuthentication() {
   const authToggleText = document.getElementById('authToggleText');
   const authAlert = document.getElementById('authAlert');
   const authAlertMsg = document.getElementById('authAlertMsg');
-  const fillDemoCredsBtn = document.getElementById('fillDemoCredsBtn');
-  const authDemoBadge = document.getElementById('authDemoBadge');
   const logoutLink = document.getElementById('logoutLink');
   
   let isLoginMode = true;
@@ -650,38 +645,8 @@ function initAuthentication() {
   if (authToggleLink) {
     authToggleLink.addEventListener('click', (e) => {
       e.preventDefault();
-      isLoginMode = !isLoginMode;
-      hideAlert();
-      
-      if (isLoginMode) {
-        authSubtitle.textContent = 'Sign in to your Indian construction portal';
-        fullNameGroup.style.display = 'none';
-        authFullNameInput.removeAttribute('required');
-        phoneGroup.style.display = 'none';
-        authPhoneInput.removeAttribute('required');
-        authSubmitBtn.querySelector('span').textContent = 'Sign In';
-        authToggleText.textContent = 'New to Infrasphere?';
-        authToggleLink.textContent = 'Create an account';
-        authDemoBadge.style.display = 'block';
-      } else {
-        authSubtitle.textContent = 'Register a new contractor account';
-        fullNameGroup.style.display = 'block';
-        authFullNameInput.setAttribute('required', 'true');
-        phoneGroup.style.display = 'block';
-        authPhoneInput.setAttribute('required', 'true');
-        authSubmitBtn.querySelector('span').textContent = 'Create Account';
-        authToggleText.textContent = 'Already have an account?';
-        authToggleLink.textContent = 'Sign In';
-        authDemoBadge.style.display = 'none';
-      }
-    });
-  }
-
-  // Quick fill demo credentials
-  if (fillDemoCredsBtn) {
-    fillDemoCredsBtn.addEventListener('click', () => {
-      authEmailInput.value = 'rajesh@infrasphere.in';
-      authPasswordInput.value = 'sharma123';
+      const isSignup = window.location.pathname === '/login';
+      navigateTo(isSignup ? '/signup' : '/login');
       hideAlert();
     });
   }
@@ -840,11 +805,17 @@ function hydrateUserUI(user) {
   const navAvatar = document.querySelector('.navbar .user-avatar');
   
   if (navUserName) navUserName.textContent = user.name;
-  if (navUserRole) navUserRole.textContent = user.companyName;
+  if (navUserRole) navUserRole.textContent = user.companyName || 'Sharma Infrastructure Private Limited';
   if (navAvatar) {
     // Generate initials
     const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     navAvatar.textContent = initials;
+  }
+
+  // Update Welcome Banner
+  const dashboardUserName = document.getElementById('dashboardUserName');
+  if (dashboardUserName) {
+    dashboardUserName.textContent = user.name;
   }
 
   // Update Settings Page Inputs
@@ -854,7 +825,7 @@ function hydrateUserUI(user) {
   const profAddrInput = document.getElementById('profAddr');
 
   if (profNameInput) profNameInput.value = user.name;
-  if (profCompInput) profCompInput.value = user.companyName;
-  if (profGSTInput) profGSTInput.value = user.gstin;
-  if (profAddrInput) profAddrInput.value = user.address;
+  if (profCompInput) profCompInput.value = user.companyName || 'Sharma Infrastructure Private Limited';
+  if (profGSTInput) profGSTInput.value = user.gstin || '09AABC1234M1Z2';
+  if (profAddrInput) profAddrInput.value = user.address || 'Sector 62, Noida, Gautam Buddha Nagar, Uttar Pradesh, 201301';
 }
