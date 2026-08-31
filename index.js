@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initRouter();
   initAuthentication();
+  handleRouting();
 });
 
 /* ================= Global State ================= */
@@ -31,48 +33,205 @@ function initTheme() {
   }
 }
 
-/* ================= Tab Switching ================= */
-function initTabs() {
-  const sidebarLinks = document.querySelectorAll('.sidebar-link[data-tab]');
-  const tabContents = document.querySelectorAll('.tab-content');
-  
-  sidebarLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const targetTab = link.getAttribute('data-tab');
-      switchTabDirect(targetTab);
-    });
+/* ================= Routing Controller ================= */
+function initRouter() {
+  // Expose routing helpers globally
+  window.navigateTo = function(path) {
+    window.history.pushState({}, '', path);
+    handleRouting();
+  };
+
+  window.addEventListener('popstate', () => {
+    handleRouting();
   });
 
-  // Expose tab switcher to global scope for inline onclicks
+  // Global click interceptor
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (link) {
+      const href = link.getAttribute('href');
+      // Intercept local routing links
+      if (href && (href.startsWith('/') || href.startsWith('#'))) {
+        // If it starts with #, it is a landing page anchor, handle scroll:
+        if (href.startsWith('#')) {
+          const targetEl = document.querySelector(href);
+          if (targetEl) {
+            e.preventDefault();
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        } else {
+          e.preventDefault();
+          navigateTo(href);
+        }
+      }
+    }
+  });
+
+  // Backwards compatibility for legacy tab switching
   window.switchTabDirect = function(targetTab) {
-    // Update active link state in sidebar
-    sidebarLinks.forEach(link => {
-      if (link.getAttribute('data-tab') === targetTab) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
-      }
-    });
-    
-    // Toggle tab visibility
-    tabContents.forEach(tab => {
-      if (tab.id === `tab-${targetTab}`) {
-        tab.classList.add('active');
-      } else {
-        tab.classList.remove('active');
-      }
-    });
-    
-    // Scroll content to top
-    document.querySelector('.main-wrapper').scrollTop = 0;
-    
-    // Auto-close sidebar on mobile view
-    const sidebar = document.getElementById('appSidebar');
-    if (sidebar && sidebar.classList.contains('open')) {
-      sidebar.classList.remove('open');
+    if (targetTab === 'dashboard') {
+      navigateTo('/dashboard');
+    } else {
+      navigateTo('/dashboard/' + targetTab);
     }
   };
+}
+
+let isAppInitialized = false;
+
+window.handleRouting = function() {
+  const path = window.location.pathname;
+  const token = localStorage.getItem('infrasphere_token');
+
+  // Route Protection & Redirect Guards
+  if (path.startsWith('/dashboard')) {
+    if (!token) {
+      // Clear history stack to prevent back-looping, and redirect
+      window.history.replaceState({}, '', '/login');
+      handleRouting();
+      return;
+    }
+  } else if (path === '/login' || path === '/signup') {
+    if (token) {
+      window.history.replaceState({}, '', '/dashboard');
+      handleRouting();
+      return;
+    }
+  }
+
+  // Hide all root pages
+  const landingPage = document.getElementById('landingPage');
+  const authPage = document.getElementById('authPage');
+  const appContainer = document.querySelector('.app-container');
+
+  if (landingPage) landingPage.style.display = 'none';
+  if (authPage) authPage.style.display = 'none';
+  if (appContainer) appContainer.style.display = 'none';
+
+  // Render current route view
+  if (path === '/') {
+    if (landingPage) landingPage.style.display = 'flex';
+  } else if (path === '/login' || path === '/signup') {
+    if (authPage) {
+      authPage.style.display = 'flex';
+      // Trigger toggle mode based on route
+      toggleAuthMode(path === '/signup');
+    }
+  } else if (path.startsWith('/dashboard')) {
+    if (appContainer) {
+      appContainer.style.display = 'flex';
+
+      // Lazy load core features exactly once to prevent duplicate listeners
+      if (!isAppInitialized) {
+        initMarketplaceSimulation();
+        initMobileResponsiveMenu();
+        isAppInitialized = true;
+      }
+
+      // Check user session
+      if (token && !currentUser) {
+        window.verifyToken(token);
+      } else if (currentUser) {
+        hydrateUserUI(currentUser);
+      }
+
+      // Render sub-tabs under dashboard
+      showDashboardTab(path);
+    }
+  } else {
+    // 404 fallback: redirect to landing
+    window.history.replaceState({}, '', '/');
+    handleRouting();
+  }
+};
+
+function toggleAuthMode(isSignup) {
+  const authSubtitle = document.getElementById('authSubtitle');
+  const fullNameGroup = document.getElementById('fullNameGroup');
+  const authFullNameInput = document.getElementById('authFullName');
+  const phoneGroup = document.getElementById('phoneGroup');
+  const authPhoneInput = document.getElementById('authPhone');
+  const authSubmitBtn = document.getElementById('authSubmitBtn');
+  const authToggleText = document.getElementById('authToggleText');
+  const authToggleLink = document.getElementById('authToggleLink');
+  const authDemoBadge = document.getElementById('authDemoBadge');
+  const authAlert = document.getElementById('authAlert');
+
+  if (authAlert) authAlert.style.display = 'none';
+
+  if (!isSignup) {
+    if (authSubtitle) authSubtitle.textContent = 'Sign in to your Indian construction portal';
+    if (fullNameGroup) fullNameGroup.style.display = 'none';
+    if (authFullNameInput) authFullNameInput.removeAttribute('required');
+    if (phoneGroup) phoneGroup.style.display = 'none';
+    if (authPhoneInput) authPhoneInput.removeAttribute('required');
+    if (authSubmitBtn) authSubmitBtn.querySelector('span').textContent = 'Sign In';
+    if (authToggleText) authToggleText.textContent = 'New to Infrasphere?';
+    if (authToggleLink) {
+      authToggleLink.textContent = 'Create an account';
+      authToggleLink.setAttribute('href', '/signup');
+    }
+    if (authDemoBadge) authDemoBadge.style.display = 'block';
+  } else {
+    if (authSubtitle) authSubtitle.textContent = 'Register a new contractor account';
+    if (fullNameGroup) fullNameGroup.style.display = 'block';
+    if (authFullNameInput) authFullNameInput.setAttribute('required', 'true');
+    if (phoneGroup) phoneGroup.style.display = 'block';
+    if (authPhoneInput) authPhoneInput.setAttribute('required', 'true');
+    if (authSubmitBtn) authSubmitBtn.querySelector('span').textContent = 'Create Account';
+    if (authToggleText) authToggleText.textContent = 'Already have an account?';
+    if (authToggleLink) {
+      authToggleLink.textContent = 'Sign In';
+      authToggleLink.setAttribute('href', '/login');
+    }
+    if (authDemoBadge) authDemoBadge.style.display = 'none';
+  }
+}
+
+function showDashboardTab(path) {
+  const tabContents = document.querySelectorAll('.tab-content');
+  const sidebarLinks = document.querySelectorAll('.sidebar-link[href]');
+  
+  // Extract sub-tab from path (e.g. /dashboard/shop -> shop)
+  let subTab = 'dashboard';
+  if (path.startsWith('/dashboard/')) {
+    subTab = path.substring('/dashboard/'.length);
+  }
+
+  // Map legacy sub-tab names to correct IDs (Designs -> Properties check)
+  let activeTabId = `tab-${subTab}`;
+  if (subTab === 'properties') {
+    activeTabId = 'tab-properties';
+  }
+
+  // Switch tab display
+  tabContents.forEach(tab => {
+    if (tab.id === activeTabId) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+
+  // Highlight active link in sidebar
+  sidebarLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === path) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+
+  // Scroll to top
+  const mainWrapper = document.querySelector('.main-wrapper');
+  if (mainWrapper) mainWrapper.scrollTop = 0;
+
+  // Auto-close sidebar on mobile view
+  const sidebar = document.getElementById('appSidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+  }
 }
 
 /* ================= Marketplace Simulation ================= */
@@ -290,21 +449,20 @@ function initMarketplaceSimulation() {
     });
   });
 
-  // 7. Designing Blueprint Purchases
-  const buyDesignButtons = document.querySelectorAll('.btn-buy-design');
-  buyDesignButtons.forEach(btn => {
+  // 7. Property Visit Bookings
+  const scheduleVisitButtons = document.querySelectorAll('.btn-schedule-visit');
+  scheduleVisitButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      const name = btn.getAttribute('data-name');
-      const price = btn.getAttribute('data-price');
+      const title = btn.getAttribute('data-title');
       
       btn.setAttribute('disabled', 'true');
-      btn.textContent = 'Purchasing...';
+      btn.textContent = 'Scheduling...';
 
       setTimeout(() => {
-        btn.textContent = 'CAD Purchased';
+        btn.textContent = 'Visit Scheduled';
         btn.className = 'btn btn-secondary btn-sm';
-        showToast(`Blueprint "${name}" purchased for ${price}! CAD files sent to register email.`);
-      }, 1000);
+        showToast(`Site visit for "${title}" scheduled successfully! Our regional relationship manager will contact you shortly.`);
+      }, 1200);
     });
   });
 
@@ -445,12 +603,13 @@ function escapeHtml(string) {
 
 /* ================= Authentication System ================= */
 let currentUser = null;
-let isAppInitialized = false;
+let authForm = null;
+let authSubmitBtn = null;
 
 function initAuthentication() {
   const authPage = document.getElementById('authPage');
   const appContainer = document.querySelector('.app-container');
-  const authForm = document.getElementById('authForm');
+  authForm = document.getElementById('authForm');
   const authSubtitle = document.getElementById('authSubtitle');
   const fullNameGroup = document.getElementById('fullNameGroup');
   const authFullNameInput = document.getElementById('authFullName');
@@ -458,7 +617,7 @@ function initAuthentication() {
   const authPhoneInput = document.getElementById('authPhone');
   const authEmailInput = document.getElementById('authEmail');
   const authPasswordInput = document.getElementById('authPassword');
-  const authSubmitBtn = document.getElementById('authSubmitBtn');
+  authSubmitBtn = document.getElementById('authSubmitBtn');
   const authToggleLink = document.getElementById('authToggleLink');
   const authToggleText = document.getElementById('authToggleText');
   const authAlert = document.getElementById('authAlert');
@@ -588,10 +747,10 @@ function initAuthentication() {
         if (!isLoginMode) {
           showAlert('success', 'Signup successful! Logging you in...');
           setTimeout(() => {
-            loginUser(data.user);
+            window.loginUser(data.user);
           }, 1000);
         } else {
-          loginUser(data.user);
+          window.loginUser(data.user);
         }
       } catch (err) {
         showAlert('danger', err.message);
@@ -606,84 +765,8 @@ function initAuthentication() {
   if (logoutLink) {
     logoutLink.addEventListener('click', (e) => {
       e.preventDefault();
-      logoutUser();
+      window.logoutUser();
     });
-  }
-
-  // Check Token on Startup
-  const token = localStorage.getItem('infrasphere_token');
-  if (token) {
-    verifyToken(token);
-  } else {
-    // Show login page
-    authPage.style.display = 'flex';
-    appContainer.style.display = 'none';
-  }
-
-  async function verifyToken(authToken) {
-    try {
-      const response = await fetch('/api/auth/me', {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Session expired');
-      }
-      loginUser(data.user);
-    } catch (err) {
-      console.warn('Re-auth failed:', err.message);
-      logoutUser();
-    }
-  }
-
-  function loginUser(user) {
-    currentUser = user;
-    
-    // Populate layout with user details
-    hydrateUserUI(user);
-
-    // Swap displays
-    authPage.style.display = 'none';
-    appContainer.style.display = 'flex';
-
-    // Reset button states
-    authSubmitBtn.removeAttribute('disabled');
-    authSubmitBtn.classList.remove('btn-loading');
-    authSubmitBtn.querySelector('span').textContent = isLoginMode ? 'Sign In' : 'Create Account';
-
-    // Clear form
-    authForm.reset();
-
-    // Initialize core dashboard ONCE
-    if (!isAppInitialized) {
-      initTabs();
-      initMarketplaceSimulation();
-      initMobileResponsiveMenu();
-      isAppInitialized = true;
-    }
-
-    showToast(`Welcome back, ${user.name}!`);
-  }
-
-  function logoutUser() {
-    currentUser = null;
-    localStorage.removeItem('infrasphere_token');
-    
-    // Swap displays
-    authPage.style.display = 'flex';
-    appContainer.style.display = 'none';
-
-    // Reset form states
-    isLoginMode = true;
-    authSubtitle.textContent = 'Sign in to your Indian construction portal';
-    fullNameGroup.style.display = 'none';
-    phoneGroup.style.display = 'none';
-    authSubmitBtn.querySelector('span').textContent = 'Sign In';
-    authToggleText.textContent = 'New to Infrasphere?';
-    authToggleLink.textContent = 'Create an account';
-    authDemoBadge.style.display = 'block';
-
-    showToast('You have been logged out.');
   }
 
   function showAlert(type, message) {
@@ -696,6 +779,59 @@ function initAuthentication() {
     authAlert.style.display = 'none';
   }
 }
+
+window.verifyToken = async function(authToken) {
+  try {
+    const response = await fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error('Session expired');
+    }
+    currentUser = data.user;
+    hydrateUserUI(currentUser);
+    // Render the correct tab after re-auth
+    showDashboardTab(window.location.pathname);
+  } catch (err) {
+    console.warn('Re-auth failed:', err.message);
+    window.logoutUser();
+  }
+};
+
+window.loginUser = function(user) {
+  currentUser = user;
+  
+  // Populate layout with user details
+  hydrateUserUI(user);
+
+  // Reset button states
+  if (authSubmitBtn) {
+    authSubmitBtn.removeAttribute('disabled');
+    authSubmitBtn.classList.remove('btn-loading');
+    authSubmitBtn.querySelector('span').textContent = 'Sign In';
+  }
+
+  // Clear form
+  if (authForm) {
+    authForm.reset();
+  }
+
+  // Transition into dashboard using router
+  navigateTo('/dashboard');
+
+  showToast(`Welcome back, ${user.name}!`);
+};
+
+window.logoutUser = function() {
+  currentUser = null;
+  localStorage.removeItem('infrasphere_token');
+  
+  // Transition to login using router
+  navigateTo('/login');
+
+  showToast('You have been logged out.');
+};
 
 function hydrateUserUI(user) {
   // Update Topbar

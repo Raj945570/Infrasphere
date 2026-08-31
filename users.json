@@ -31,5 +31,27 @@
     "gstin": "09AABC3740M1Z2",
     "address": "Regional Address, India",
     "createdAt": "2026-08-30T17:11:38.149Z"
+  },
+  {
+    "id": "user_1788113770998bb2eq",
+    "name": "Raj Mishra",
+    "email": "alpharajmishra@gmail.com",
+    "password": "$2b$10$Xu0JuqgILk//RJP3A0vsM.LT/LlpiAhFrIk8iRltK8gUo2KhgXPpy",
+    "phone": "9455701757",
+    "companyName": "Raj Mishra Enterprises",
+    "gstin": "09AABC3438M1Z2",
+    "address": "Regional Address, India",
+    "createdAt": "2026-08-30T18:16:10.999Z"
+  },
+  {
+    "id": "user_178814924821313taf",
+    "name": "Raj Mishra",
+    "email": "alpharaajmishra@gmail.com",
+    "password": "$2b$10$0tKy75uJBtLLLfHej0E0EOrHc.OFtG8rCHFybaWP3ztVm1bCGxyH6",
+    "phone": "9455701757",
+    "companyName": "Raj Mishra Enterprises",
+    "gstin": "09AABC4835M1Z2",
+    "address": "Regional Address, India",
+    "createdAt": "2026-08-31T04:07:28.213Z"
   }
 ]
