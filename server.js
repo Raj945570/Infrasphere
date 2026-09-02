@@ -17,19 +17,50 @@ app.use(express.json());
 // Helper function to read users database
 function readUsers() {
   if (!fs.existsSync(DB_FILE)) {
-    // Seed database with default Indian contractor data
+    // Seed database with default Indian users for all 3 roles
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync('sharma123', salt);
     const seedUsers = [
       {
-        id: 'user_' + Date.now(),
+        id: 'user_client_001',
         name: 'Rajesh Sharma',
         email: 'rajesh@infrasphere.in',
         password: hashedPassword,
         phone: '9876543210',
+        role: 'Client',
+        avatar: '',
         companyName: 'Sharma Infrastructure Private Limited',
         gstin: '09AABC1234M1Z2',
         address: 'Sector 62, Noida, Gautam Buddha Nagar, Uttar Pradesh, 201301',
+        bio: 'Principal Infrastructure Contractor specializing in highway and utility cabling projects.',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'user_seller_002',
+        name: 'Amit Kumar',
+        email: 'amit@infrasphere.in',
+        password: hashedPassword,
+        phone: '9876543211',
+        role: 'Seller',
+        avatar: '',
+        companyName: 'Kumar Steel & Building Supplies',
+        gstin: '09AABC3680M1Z2',
+        address: 'Depot 4, Okhla Phase 2, Industrial Area, New Delhi, 110020',
+        bio: 'Authorized regional distributor for Tata Tiscon, UltraTech, and industrial land holdings.',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'user_consultant_003',
+        name: 'Dr. Sanjay Rao',
+        email: 'sanjay@infrasphere.in',
+        password: hashedPassword,
+        phone: '9876543212',
+        role: 'Consultant',
+        avatar: '',
+        companyName: 'Rao Structural & Seismic Engineering',
+        gstin: '09AABC3740M1Z2',
+        address: 'IIT Bombay Research Park, Powai, Mumbai, 400076',
+        bio: 'IIT Bombay Alumnus • 22 Yrs Exp • High-rise RCC Frames and Seismological Audits.',
         createdAt: new Date().toISOString()
       }
     ];
@@ -38,7 +69,14 @@ function readUsers() {
   }
   try {
     const data = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    return parsed.map(u => ({
+      ...u,
+      role: u.role || 'Client',
+      avatar: u.avatar || '',
+      phone: u.phone || '',
+      bio: u.bio || ''
+    }));
   } catch (error) {
     console.error('Error reading users database, resetting.', error);
     return [];
@@ -75,7 +113,7 @@ function authenticateToken(req, res, next) {
 
 // 1. User Signup
 app.post('/api/auth/signup', (req, res) => {
-  const { name, email, password, phone } = req.body;
+  const { name, email, password, phone, role } = req.body;
 
   // Basic Validation
   if (!name || !email || !password || !phone) {
@@ -99,6 +137,9 @@ app.post('/api/auth/signup', (req, res) => {
     return res.status(400).json({ error: 'Phone number must be exactly 10 digits' });
   }
 
+  const validRoles = ['Client', 'Seller', 'Consultant'];
+  const selectedRole = validRoles.includes(role) ? role : 'Client';
+
   const users = readUsers();
   const normalizedEmail = email.toLowerCase().trim();
 
@@ -112,16 +153,19 @@ app.post('/api/auth/signup', (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
 
-  // Default contractor data seed
+  // Default contractor/supplier data seed
   const newUser = {
     id: 'user_' + Date.now() + Math.random().toString(36).substr(2, 5),
     name: name.trim(),
     email: normalizedEmail,
     password: hashedPassword,
     phone: phone.trim(),
-    companyName: name.trim() + ' Enterprises',
+    role: selectedRole,
+    avatar: '',
+    companyName: name.trim() + (selectedRole === 'Seller' ? ' Supplies & Logistics' : selectedRole === 'Consultant' ? ' Design & Engineering' : ' Enterprises'),
     gstin: '09AABC' + Math.floor(1000 + Math.random() * 9000) + 'M1Z2',
     address: 'Regional Address, India',
+    bio: selectedRole === 'Seller' ? 'Authorized Indian building materials supplier & industrial land broker.' : selectedRole === 'Consultant' ? 'Senior civil & structural engineering consultant.' : 'Principal Infrastructure Contractor.',
     createdAt: new Date().toISOString()
   };
 
@@ -140,9 +184,12 @@ app.post('/api/auth/signup', (req, res) => {
       name: newUser.name,
       email: newUser.email,
       phone: newUser.phone,
+      role: newUser.role,
+      avatar: newUser.avatar,
       companyName: newUser.companyName,
       gstin: newUser.gstin,
-      address: newUser.address
+      address: newUser.address,
+      bio: newUser.bio
     }
   });
 });
@@ -181,9 +228,12 @@ app.post('/api/auth/login', (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone || '',
+      role: user.role || 'Client',
+      avatar: user.avatar || '',
       companyName: user.companyName,
       gstin: user.gstin,
-      address: user.address
+      address: user.address,
+      bio: user.bio || ''
     }
   });
 });
@@ -203,19 +253,22 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone || '',
+      role: user.role || 'Client',
+      avatar: user.avatar || '',
       companyName: user.companyName,
       gstin: user.gstin,
-      address: user.address
+      address: user.address,
+      bio: user.bio || ''
     }
   });
 });
 
 // 4. Update Profile Settings
 app.post('/api/profile/update', authenticateToken, (req, res) => {
-  const { name, companyName, gstin, address } = req.body;
+  const { name, phone, role, avatar, companyName, gstin, address, bio } = req.body;
 
-  if (!name || !companyName || !gstin || !address) {
-    return res.status(400).json({ error: 'All profile fields are required' });
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
   }
 
   const users = readUsers();
@@ -225,11 +278,17 @@ app.post('/api/profile/update', authenticateToken, (req, res) => {
     return res.status(404).json({ error: 'User not found' });
   }
 
+  const validRoles = ['Client', 'Seller', 'Consultant'];
+
   // Update details
   users[userIndex].name = name.trim();
-  users[userIndex].companyName = companyName.trim();
-  users[userIndex].gstin = gstin.trim();
-  users[userIndex].address = address.trim();
+  if (phone !== undefined) users[userIndex].phone = phone.trim();
+  if (role && validRoles.includes(role)) users[userIndex].role = role;
+  if (avatar !== undefined) users[userIndex].avatar = avatar;
+  if (companyName !== undefined) users[userIndex].companyName = companyName.trim();
+  if (gstin !== undefined) users[userIndex].gstin = gstin.trim();
+  if (address !== undefined) users[userIndex].address = address.trim();
+  if (bio !== undefined) users[userIndex].bio = bio.trim();
 
   writeUsers(users);
 
@@ -239,9 +298,13 @@ app.post('/api/profile/update', authenticateToken, (req, res) => {
       id: users[userIndex].id,
       name: users[userIndex].name,
       email: users[userIndex].email,
+      phone: users[userIndex].phone || '',
+      role: users[userIndex].role || 'Client',
+      avatar: users[userIndex].avatar || '',
       companyName: users[userIndex].companyName,
       gstin: users[userIndex].gstin,
-      address: users[userIndex].address
+      address: users[userIndex].address,
+      bio: users[userIndex].bio || ''
     }
   });
 });
