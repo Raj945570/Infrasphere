@@ -309,11 +309,125 @@ app.post('/api/profile/update', authenticateToken, (req, res) => {
   });
 });
 
+// --- Projects Database Management ---
+const PROJECTS_FILE = path.join(__dirname, 'projects.json');
+
+function readProjects() {
+  if (!fs.existsSync(PROJECTS_FILE)) {
+    const seedProjects = [
+      {
+        id: 'proj_' + Date.now() + '_001',
+        userId: 'user_client_001',
+        fullName: 'Rajesh Sharma',
+        phone: '9876543210',
+        projectType: 'Home Construction',
+        customProjectType: '',
+        budget: '₹45,00,000',
+        location: 'Sector 62, Noida, UP',
+        description: 'Construction of G+2 duplex residential building with RCC structural frame.',
+        status: 'In Progress',
+        createdAt: new Date(Date.now() - 86400000 * 3).toISOString()
+      },
+      {
+        id: 'proj_' + (Date.now() + 1) + '_002',
+        userId: 'user_client_001',
+        fullName: 'Rajesh Sharma',
+        phone: '9876543210',
+        projectType: 'Interior Design',
+        customProjectType: '',
+        budget: '₹12,50,000',
+        location: 'Indirapuram, Ghaziabad',
+        description: 'Commercial studio turnkey interior woodwork, acoustic panelling & false ceiling.',
+        status: 'Pending',
+        createdAt: new Date(Date.now() - 86400000).toISOString()
+      }
+    ];
+    fs.writeFileSync(PROJECTS_FILE, JSON.stringify(seedProjects, null, 2));
+    return seedProjects;
+  }
+  try {
+    const data = fs.readFileSync(PROJECTS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading projects database:', error);
+    return [];
+  }
+}
+
+function writeProjects(projects) {
+  fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projects, null, 2));
+}
+
+// Initialize projects database
+readProjects();
+
+// 4. Create Project (Start Project Form Submission)
+app.post('/api/projects', authenticateToken, (req, res) => {
+  const { fullName, phone, projectType, customProjectType, budget, location, description } = req.body;
+
+  // Validate required fields
+  if (!fullName || !fullName.trim()) {
+    return res.status(400).json({ error: 'Please enter your Full Name' });
+  }
+  if (!phone || !phone.trim()) {
+    return res.status(400).json({ error: 'Please enter your Phone Number' });
+  }
+  if (!projectType || !projectType.trim()) {
+    return res.status(400).json({ error: 'Please select a Project Type' });
+  }
+  if (projectType === 'Others' && (!customProjectType || !customProjectType.trim())) {
+    return res.status(400).json({ error: 'Please specify your custom project type' });
+  }
+  if (!budget || !budget.trim()) {
+    return res.status(400).json({ error: 'Please specify your Budget' });
+  }
+  if (!location || !location.trim()) {
+    return res.status(400).json({ error: 'Please specify your Project Location' });
+  }
+
+  const projects = readProjects();
+  const formattedBudget = budget.trim().startsWith('₹') ? budget.trim() : `₹${budget.trim()}`;
+  const finalType = projectType === 'Others' ? (customProjectType.trim() || 'Others') : projectType.trim();
+
+  const newProject = {
+    id: 'proj_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    userId: req.userId,
+    fullName: fullName.trim(),
+    phone: phone.trim(),
+    projectType: finalType,
+    rawCategory: projectType.trim(),
+    customProjectType: customProjectType ? customProjectType.trim() : '',
+    budget: formattedBudget,
+    location: location.trim(),
+    description: description ? description.trim() : '',
+    status: 'Pending',
+    createdAt: new Date().toISOString()
+  };
+
+  projects.unshift(newProject);
+  writeProjects(projects);
+
+  res.status(201).json({
+    message: 'Project submitted successfully 🚀',
+    project: newProject
+  });
+});
+
+// 5. Get Logged-in User's Projects
+app.get('/api/projects', authenticateToken, (req, res) => {
+  const projects = readProjects();
+  // Return only logged-in user's projects
+  const userProjects = projects.filter(p => p.userId === req.userId);
+  res.json({
+    projects: userProjects
+  });
+});
+
 // Default Route
 app.get('/', (req, res) => {
-  res.send('Infrasphere Authentication API is running.');
+  res.send('Infrasphere Authentication & Projects API is running.');
 });
 
 app.listen(PORT, () => {
-  console.log(`Express auth server running on http://localhost:${PORT}`);
+  console.log(`Express server running on http://localhost:${PORT}`);
 });

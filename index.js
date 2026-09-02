@@ -200,6 +200,7 @@ async function handleRouting() {
 
       if (currentUser) {
         hydrateUserUI(currentUser);
+        loadUserProjects();
 
         // Role Authorization Route Guard
         const userRole = currentUser.role || 'Client';
@@ -1505,6 +1506,88 @@ window.handleStartProjectClick = function(e) {
   }
 };
 
+/* ================= Dashboard User Projects Loader ================= */
+async function loadUserProjects() {
+  const token = localStorage.getItem('infrasphere_token');
+  if (!token) return;
+
+  const container = document.getElementById('myProjectsContainer');
+  const countBadge = document.getElementById('myProjectsCountBadge');
+  const kpi2Val = document.getElementById('kpi2Val');
+
+  if (!container) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/projects`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) return;
+      throw new Error('Failed to fetch projects');
+    }
+
+    const data = await res.json();
+    const projects = data.projects || [];
+
+    if (countBadge) {
+      countBadge.textContent = `${projects.length} Project${projects.length === 1 ? '' : 's'}`;
+    }
+    if (kpi2Val) {
+      kpi2Val.textContent = projects.length;
+    }
+
+    if (projects.length === 0) {
+      container.innerHTML = `
+        <div class="empty-projects-state">
+          <div style="font-size: 32px; margin-bottom: 8px;">🏗️</div>
+          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 6px;">No projects submitted yet</h3>
+          <p style="color: var(--text-muted); font-size: 13px; max-width: 360px; margin: 0 auto 16px auto;">
+            Submit your construction, interior, renovation or digital project with our engineering team.
+          </p>
+          <a href="/apply" class="btn btn-primary btn-sm">Start Your Project</a>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = projects.map(p => {
+      const statusClass = p.status === 'Completed' ? 'badge-success' : p.status === 'In Progress' ? 'badge-primary' : 'badge-warning';
+      const formattedDate = new Date(p.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `
+        <div class="card my-project-card">
+          <div class="project-card-header flex justify-between items-start mb-12">
+            <div>
+              <span class="badge badge-secondary" style="font-size: 11px;">${escapeHtml(p.projectType)}</span>
+              <h3 class="project-card-title">${escapeHtml(p.fullName)}</h3>
+            </div>
+            <span class="badge ${statusClass}">${escapeHtml(p.status)}</span>
+          </div>
+          <p class="project-card-desc">${escapeHtml(p.description || 'No additional specifications provided.')}</p>
+          <div class="project-card-footer flex justify-between items-center pt-12 border-top">
+            <div class="project-budget">
+              <span class="text-xs text-muted" style="display:block; font-size: 11px;">Budget</span>
+              <span class="project-budget-val">${escapeHtml(p.budget)}</span>
+            </div>
+            <div class="project-meta text-right">
+              <span class="text-xs text-muted flex items-center gap-4" style="font-size: 11px; justify-content: flex-end;">
+                <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${escapeHtml(p.location)}
+              </span>
+              <span class="text-xs text-muted" style="display: block; font-size: 10px; margin-top: 2px;">${formattedDate}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error('Error loading user projects:', err);
+  }
+}
+window.loadUserProjects = loadUserProjects;
+
 /* ================= Premium "Start Your Project" Form Handler ================= */
 function initStartProjectForm() {
   const projectForm = document.getElementById('projectForm');
@@ -1513,26 +1596,129 @@ function initStartProjectForm() {
   const btnSubmitAnotherProject = document.getElementById('btnSubmitAnotherProject');
   const projectBackLink = document.getElementById('projectBackLink');
   const btnReturnHome = document.getElementById('btnReturnHome');
+  const projTypeSelect = document.getElementById('projType');
+  const customTypeGroup = document.getElementById('customTypeGroup');
+  const projCustomTypeInput = document.getElementById('projCustomType');
+  const projectAlert = document.getElementById('projectAlert');
+  const projectAlertMsg = document.getElementById('projectAlertMsg');
+  const projSubmitBtn = document.getElementById('projSubmitBtn');
 
-  if (projectForm) {
-    projectForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Only UI (no backend, no API, no database)
-      projectForm.style.display = 'none';
-      if (projectFooter) projectFooter.style.display = 'none';
-      if (projectSuccessState) projectSuccessState.style.display = 'flex';
-      showToast('Project application submitted successfully!');
+  function showProjectError(msg) {
+    if (projectAlert && projectAlertMsg) {
+      projectAlertMsg.textContent = msg;
+      projectAlert.style.display = 'flex';
+      projectAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      showToast(msg);
+    }
+  }
+
+  function hideProjectError() {
+    if (projectAlert) {
+      projectAlert.style.display = 'none';
+    }
+  }
+
+  // Toggle "Others" custom input field
+  if (projTypeSelect && customTypeGroup) {
+    projTypeSelect.addEventListener('change', () => {
+      if (projTypeSelect.value === 'Others') {
+        customTypeGroup.style.display = 'block';
+        if (projCustomTypeInput) projCustomTypeInput.setAttribute('required', 'true');
+      } else {
+        customTypeGroup.style.display = 'none';
+        if (projCustomTypeInput) projCustomTypeInput.removeAttribute('required');
+      }
     });
   }
 
-  if (btnSubmitAnotherProject) {
-    btnSubmitAnotherProject.addEventListener('click', () => {
-      if (projectForm) {
-        projectForm.reset();
-        projectForm.style.display = 'flex';
+  if (projectForm) {
+    projectForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideProjectError();
+
+      const token = localStorage.getItem('infrasphere_token');
+      if (!token) {
+        showToast('Please sign in to submit your project');
+        navigateTo('/login');
+        return;
       }
-      if (projectFooter) projectFooter.style.display = 'block';
-      if (projectSuccessState) projectSuccessState.style.display = 'none';
+
+      const fullName = document.getElementById('projFullName')?.value.trim();
+      const phone = document.getElementById('projPhone')?.value.trim();
+      const projectType = projTypeSelect?.value;
+      const customProjectType = projCustomTypeInput?.value.trim();
+      const budget = document.getElementById('projBudget')?.value.trim();
+      const location = document.getElementById('projLocation')?.value.trim();
+      const description = document.getElementById('projDescription')?.value.trim();
+
+      if (!fullName || !phone || !projectType || !budget || !location) {
+        showProjectError('Please fill in all required fields.');
+        return;
+      }
+
+      if (projectType === 'Others' && !customProjectType) {
+        showProjectError('Please specify your custom project type.');
+        return;
+      }
+
+      // Loading state: Disable submit button & change text
+      if (projSubmitBtn) {
+        projSubmitBtn.disabled = true;
+        projSubmitBtn.innerHTML = `<span>Submitting...</span>`;
+        projSubmitBtn.style.opacity = '0.75';
+        projSubmitBtn.style.cursor = 'not-allowed';
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/projects`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            fullName,
+            phone,
+            projectType,
+            customProjectType,
+            budget,
+            location,
+            description
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to submit project request');
+        }
+
+        // On success:
+        showToast('Project submitted successfully 🚀');
+        projectForm.reset();
+        if (customTypeGroup) customTypeGroup.style.display = 'none';
+
+        // Refresh projects in dashboard
+        loadUserProjects();
+
+        // Redirect to dashboard after 1–2 sec
+        setTimeout(() => {
+          navigateTo('/dashboard');
+        }, 1400);
+
+      } catch (err) {
+        console.error('Project submit error:', err);
+        showProjectError(err.message || 'Error submitting project. Please try again.');
+      } finally {
+        // Restore submit button
+        if (projSubmitBtn) {
+          projSubmitBtn.disabled = false;
+          projSubmitBtn.innerHTML = `<span>Submit Request</span>`;
+          projSubmitBtn.style.opacity = '1';
+          projSubmitBtn.style.cursor = 'pointer';
+        }
+      }
     });
   }
 
@@ -1553,6 +1739,19 @@ function initStartProjectForm() {
 
   if (btnReturnHome) {
     btnReturnHome.addEventListener('click', handleReturnNavigation);
+  }
+
+  if (btnSubmitAnotherProject) {
+    btnSubmitAnotherProject.addEventListener('click', () => {
+      if (projectForm) {
+        projectForm.reset();
+        projectForm.style.display = 'flex';
+      }
+      if (customTypeGroup) customTypeGroup.style.display = 'none';
+      if (projectFooter) projectFooter.style.display = 'block';
+      if (projectSuccessState) projectSuccessState.style.display = 'none';
+      hideProjectError();
+    });
   }
 }
 

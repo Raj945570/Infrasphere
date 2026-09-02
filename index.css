@@ -2632,5 +2632,63 @@ a {
   }
 }
 
+/* ================= Dashboard My Projects Grid & Cards ================= */
+.my-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 18px;
+}
+
+.my-project-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.my-project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.project-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 6px 0 0 0;
+  line-height: 1.3;
+}
+
+.project-card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 10px 0 16px 0;
+}
+
+.project-budget-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.empty-projects-state {
+  grid-column: 1 / -1;
+  padding: 40px 20px;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-color);
+  border-radius: 16px;
+}
+
 
 

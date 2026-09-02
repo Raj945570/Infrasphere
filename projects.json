@@ -1,0 +1,42 @@
+[
+  {
+    "id": "proj_1788373375206_xzje1",
+    "userId": "user_client_001",
+    "fullName": "Rajesh Sharma",
+    "phone": "9876543210",
+    "projectType": "Eco-Resort & Hydroponic Greenhouse",
+    "rawCategory": "Others",
+    "customProjectType": "Eco-Resort & Hydroponic Greenhouse",
+    "budget": "₹85,00,000",
+    "location": "Rishikesh, Uttarakhand",
+    "description": "High-altitude sustainable wooden chalets and geothermal greenhouse development.",
+    "status": "Pending",
+    "createdAt": "2026-09-02T18:22:55.207Z"
+  },
+  {
+    "id": "proj_1788373026435_001",
+    "userId": "user_client_001",
+    "fullName": "Rajesh Sharma",
+    "phone": "9876543210",
+    "projectType": "Home Construction",
+    "customProjectType": "",
+    "budget": "₹45,00,000",
+    "location": "Sector 62, Noida, UP",
+    "description": "Construction of G+2 duplex residential building with RCC structural frame.",
+    "status": "In Progress",
+    "createdAt": "2026-08-30T18:17:06.435Z"
+  },
+  {
+    "id": "proj_1788373026437_002",
+    "userId": "user_client_001",
+    "fullName": "Rajesh Sharma",
+    "phone": "9876543210",
+    "projectType": "Interior Design",
+    "customProjectType": "",
+    "budget": "₹12,50,000",
+    "location": "Indirapuram, Ghaziabad",
+    "description": "Commercial studio turnkey interior woodwork, acoustic panelling & false ceiling.",
+    "status": "Pending",
+    "createdAt": "2026-09-01T18:17:06.436Z"
+  }
+]

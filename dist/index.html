@@ -6,8 +6,8 @@
   <title>Infrasphere - Indian Construction Marketplace SaaS</title>
   <meta name="description" content="A premium responsive SaaS platform for managing construction projects, procuring structural materials, booking technical civil consultants, and acquiring industrial commercial land in India.">
   <link rel="icon" href="/assets/logo-icon.png" />
-  <script type="module" crossorigin src="/assets/index-DlUsHfdj.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CIEeT0re.css">
+  <script type="module" crossorigin src="/assets/index-Cv5X8LxU.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Cx-4Fr5C.css">
 </head>
 <body>
 
@@ -248,6 +248,12 @@
         </div>
       </div>
 
+      <!-- Clean Red Alert Box for Errors -->
+      <div id="projectAlert" class="auth-alert auth-alert-danger" style="display: none; margin-bottom: 14px;">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="projectAlertMsg">Error submitting project request</span>
+      </div>
+
       <!-- Project Application Form -->
       <form id="projectForm" class="auth-form">
         <!-- 1. Full Name -->
@@ -277,6 +283,12 @@
             <option value="Business / Digital Services">Business / Digital Services</option>
             <option value="Others">Others</option>
           </select>
+        </div>
+
+        <!-- Dynamic Custom Type input when "Others" is selected -->
+        <div class="form-group" id="customTypeGroup" style="display: none;">
+          <label class="form-label" for="projCustomType">Specify Project Type *</label>
+          <input type="text" class="form-input" id="projCustomType" placeholder="e.g. Solar Farm / Warehousing Facility">
         </div>
 
         <!-- 4. Budget -->
@@ -536,6 +548,25 @@
                 <span class="stat-label" id="kpi4Label">Expert Requests</span>
                 <span class="stat-trend badge badge-warning" id="kpi4Trend" style="margin-top: 6px; width: fit-content; font-size: 11px;">1 Session Today</span>
               </div>
+            </div>
+          </div>
+
+          <!-- ================= My Projects Section (Dynamic Real-Time User Projects) ================= -->
+          <div class="dashboard-projects-section mb-32" id="dashboardMyProjectsSection">
+            <div class="marketplace-section-title flex justify-between items-center mb-16">
+              <div class="flex items-center gap-12">
+                <h2 style="font-size: 18px; font-weight: 700; margin: 0;">My Projects</h2>
+                <span class="badge badge-primary" id="myProjectsCountBadge">0 Projects</span>
+              </div>
+              <a href="/apply" class="btn btn-primary btn-sm">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                <span>New Project Request</span>
+              </a>
+            </div>
+
+            <!-- Projects Grid / Cards Container -->
+            <div class="my-projects-grid" id="myProjectsContainer">
+              <!-- Rendered dynamically by loadUserProjects() in index.js -->
             </div>
           </div>
 
