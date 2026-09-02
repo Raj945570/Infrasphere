@@ -146,10 +146,12 @@ async function handleRouting() {
   const landingPage = document.getElementById('landingPage');
   const authPage = document.getElementById('authPage');
   const appContainer = document.querySelector('.app-container');
+  const startProjectPage = document.getElementById('startProjectPage');
 
   if (landingPage) landingPage.style.display = 'none';
   if (authPage) authPage.style.display = 'none';
   if (appContainer) appContainer.style.display = 'none';
+  if (startProjectPage) startProjectPage.style.display = 'none';
 
   // Render current view
   if (path === '/') {
@@ -158,6 +160,16 @@ async function handleRouting() {
     if (authPage) {
       authPage.style.display = 'flex';
       toggleAuthMode(path === '/signup');
+    }
+  } else if (path === '/start-project' || path === '/project' || path === '/start') {
+    if (startProjectPage) {
+      startProjectPage.style.display = 'flex';
+      const pForm = document.getElementById('projectForm');
+      const pSuccess = document.getElementById('projectSuccessState');
+      const pFooter = document.getElementById('projectFooter');
+      if (pForm) pForm.style.display = 'flex';
+      if (pSuccess) pSuccess.style.display = 'none';
+      if (pFooter) pFooter.style.display = 'block';
     }
   } else if (path.startsWith('/dashboard')) {
     if (appContainer) {
@@ -1468,11 +1480,58 @@ window.goToSignup = function() {
   }
 };
 
+/* ================= Premium "Start Your Project" Form Handler ================= */
+function initStartProjectForm() {
+  const projectForm = document.getElementById('projectForm');
+  const projectSuccessState = document.getElementById('projectSuccessState');
+  const projectFooter = document.getElementById('projectFooter');
+  const btnSubmitAnotherProject = document.getElementById('btnSubmitAnotherProject');
+  const projectBackLink = document.getElementById('projectBackLink');
+  const btnReturnHome = document.getElementById('btnReturnHome');
+
+  if (projectForm) {
+    projectForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Only UI (no backend, no API, no database)
+      projectForm.style.display = 'none';
+      if (projectFooter) projectFooter.style.display = 'none';
+      if (projectSuccessState) projectSuccessState.style.display = 'flex';
+      showToast('Project application submitted successfully!');
+    });
+  }
+
+  if (btnSubmitAnotherProject) {
+    btnSubmitAnotherProject.addEventListener('click', () => {
+      if (projectForm) {
+        projectForm.reset();
+        projectForm.style.display = 'flex';
+      }
+      if (projectFooter) projectFooter.style.display = 'block';
+      if (projectSuccessState) projectSuccessState.style.display = 'none';
+    });
+  }
+
+  if (projectBackLink) {
+    projectBackLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo('/');
+    });
+  }
+
+  if (btnReturnHome) {
+    btnReturnHome.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo('/');
+    });
+  }
+}
+
 /* ================= Application Initialization ================= */
 function startApp() {
   initTheme();
   initRouter();
   initAuthentication();
+  initStartProjectForm();
   initProfileManagement();
   initRoleFeatures();
   initMobileResponsiveMenu();

@@ -22,10 +22,11 @@
         <a href="#features">Features</a>
         <a href="#marketplace">Marketplace</a>
         <a href="#stats">Metrics</a>
+        <a href="/start-project" style="color: var(--primary); font-weight: 600;">Start Project</a>
       </nav>
       <div class="landing-auth-buttons">
         <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
-        <a href="/signup" class="btn btn-primary btn-sm">Get Started</a>
+        <a href="/start-project" class="btn btn-primary btn-sm">Start Project</a>
       </div>
     </header>
 
@@ -35,8 +36,8 @@
         <h1 class="landing-hero-title">Reimagining Indian Construction & Infrastructure</h1>
         <p class="landing-hero-subtitle">The all-in-one cloud SaaS marketplace for modern developers, material suppliers, and civil engineering consultants. Procure structural materials, publish tender RFQs, consult top structural engineers, and acquire RERA-approved commercial land parcels.</p>
         <div class="landing-hero-ctas">
-          <a href="/signup" class="btn btn-primary">Create Free Account</a>
-          <a href="/login" class="btn btn-outline">Explore Live Demo</a>
+          <a href="/start-project" class="btn btn-primary">Start Your Project</a>
+          <a href="/signup" class="btn btn-secondary">Create Free Account</a>
         </div>
       </div>
       <div class="landing-hero-mesh-wrapper">
@@ -216,6 +217,98 @@
         <span id="authToggleText">New to Infrasphere?</span>
         <a href="/signup" id="createAccountLink">Create an account</a>
         <a href="/login" id="loginLink" style="display: none;">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= START YOUR PROJECT APPLICATION PAGE ================= -->
+  <div id="startProjectPage" class="auth-page project-page-dark" style="display: none;">
+    <div class="auth-card project-card">
+      <div class="auth-logo-section">
+        <div class="auth-logo">
+          <img src="/assets/logo-icon.png" alt="Infrasphere" class="project-logo-img" />
+        </div>
+        <h2 class="auth-title project-title">Start Your Project</h2>
+        <p class="auth-subtitle">Tell us your requirements</p>
+      </div>
+
+      <!-- Success State (Pure Client-side UI) -->
+      <div id="projectSuccessState" class="project-success-box" style="display: none;">
+        <div class="success-icon-badge">
+          <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>Request Submitted!</h3>
+        <p>Thank you for submitting your project specifications. Our structural engineers and advisory team will review your requirements and connect with you shortly.</p>
+        <button type="button" class="btn btn-secondary w-full" id="btnSubmitAnotherProject" style="margin-top: 8px;">
+          Submit Another Request
+        </button>
+        <div class="auth-footer" style="margin-top: 14px;">
+          <a href="/" id="btnReturnHome">← Back to Infrasphere</a>
+        </div>
+      </div>
+
+      <!-- Project Application Form -->
+      <form id="projectForm" class="auth-form">
+        <!-- 1. Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="projFullName">Full Name *</label>
+          <input type="text" class="form-input" id="projFullName" placeholder="e.g. Vikram Singhania" required>
+        </div>
+
+        <!-- 2. Phone Number -->
+        <div class="form-group">
+          <label class="form-label" for="projPhone">Phone Number *</label>
+          <div class="phone-input-wrapper">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" class="form-input" id="projPhone" placeholder="9876543210" maxlength="10" style="padding-left: 54px;" required>
+          </div>
+        </div>
+
+        <!-- 3. Project Type -->
+        <div class="form-group">
+          <label class="form-label" for="projType">Project Type *</label>
+          <select class="form-select role-select-styled" id="projType" required>
+            <option value="" disabled selected>Select project category</option>
+            <option value="Home Construction">Home Construction</option>
+            <option value="Interior Design">Interior Design</option>
+            <option value="Plot Purchase">Plot Purchase</option>
+            <option value="Renovation">Renovation</option>
+            <option value="Business / Digital Services">Business / Digital Services</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+
+        <!-- 4. Budget -->
+        <div class="form-group">
+          <label class="form-label" for="projBudget">Budget *</label>
+          <div class="budget-input-wrapper">
+            <span class="currency-prefix">₹</span>
+            <input type="text" class="form-input" id="projBudget" placeholder="e.g. 25,00,000" style="padding-left: 34px;" required>
+          </div>
+        </div>
+
+        <!-- 5. Location -->
+        <div class="form-group">
+          <label class="form-label" for="projLocation">Location *</label>
+          <input type="text" class="form-input" id="projLocation" placeholder="e.g. Whitefield, Bengaluru" required>
+        </div>
+
+        <!-- 6. Description -->
+        <div class="form-group">
+          <label class="form-label" for="projDescription">Description</label>
+          <textarea class="form-input form-textarea" id="projDescription" rows="3" placeholder="Tell us about your project timeline, site area, or specific requirements..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-full" id="projSubmitBtn" style="margin-top: 4px;">
+          <span>Submit Request</span>
+        </button>
+      </form>
+
+      <!-- Back Link -->
+      <div class="auth-footer" id="projectFooter">
+        <a href="/" id="projectBackLink">← Back to Infrasphere</a>
       </div>
     </div>
   </div>
