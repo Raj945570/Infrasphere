@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Infrasphere - Indian Construction Marketplace SaaS</title>
   <meta name="description" content="A premium responsive SaaS platform for managing construction projects, procuring structural materials, booking technical civil consultants, and acquiring industrial commercial land in India.">
-  <script type="module" crossorigin src="/assets/index-RVOm5ZXu.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DQq95fNJ.css">
+  <link rel="icon" href="/assets/logo-icon.png" />
+  <script type="module" crossorigin src="/assets/index-CZZg5_nj.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Dwa9yfX5.css">
 </head>
 <body>
 
@@ -14,9 +15,9 @@
   <div id="landingPage" class="landing-page" style="display: none;">
     <!-- Landing Header -->
     <header class="landing-header">
-      <div class="landing-logo">
-        <div class="sidebar-logo" style="width: 32px; height: 32px; font-size: 16px; box-shadow: none;">I</div>
-        <span class="brand-text" style="font-size: 18px;">Infrasphere</span>
+      <div class="logo">
+        <img src="/assets/logo.png" alt="Infrasphere Logo" />
+        <span class="logo-text">Infrasphere</span>
       </div>
       <nav class="landing-nav">
         <a href="#features">Features</a>
@@ -145,28 +146,11 @@
   <div id="authPage" class="auth-page" style="display: none;">
     <div class="auth-card">
       <div class="auth-logo-section">
-        <div class="auth-logo">I</div>
+        <div class="auth-logo">
+          <img src="/assets/logo.png" alt="Infrasphere" />
+        </div>
         <h2 class="auth-title">Infrasphere</h2>
         <p class="auth-subtitle" id="authSubtitle">Enter your credentials to continue</p>
-      </div>
-
-      <!-- Quick Demo Login Switcher (Instant Testing for Reviewers) -->
-      <div class="demo-login-box" id="demoLoginBox">
-        <div class="demo-login-header">⚡ One-Click Demo Logins:</div>
-        <div class="demo-chips-grid">
-          <button type="button" class="demo-chip-btn" id="demoBtnClient" onclick="quickFillLogin('rajesh@infrasphere.in', 'sharma123', 'Client')">
-            <span class="chip-role">🏗️ Client</span>
-            <span class="chip-name">Rajesh Sharma</span>
-          </button>
-          <button type="button" class="demo-chip-btn" id="demoBtnSeller" onclick="quickFillLogin('amit@infrasphere.in', 'sharma123', 'Seller')">
-            <span class="chip-role">🏭 Seller</span>
-            <span class="chip-name">Amit Kumar</span>
-          </button>
-          <button type="button" class="demo-chip-btn" id="demoBtnConsultant" onclick="quickFillLogin('sanjay@infrasphere.in', 'sharma123', 'Consultant')">
-            <span class="chip-role">📐 Consultant</span>
-            <span class="chip-name">Dr. Sanjay Rao</span>
-          </button>
-        </div>
       </div>
 
       <!-- Alert Box -->
@@ -185,11 +169,11 @@
 
         <!-- Role Selection (Only visible on Signup) -->
         <div class="form-group" id="roleGroup" style="display: none;">
-          <label class="form-label" for="authRole">Select User Role (Required) *</label>
+          <label class="form-label" for="authRole">Role *</label>
           <select class="form-select role-select-styled" id="authRole" required>
-            <option value="Client" selected>🏗️ Client (Procure Materials, View Lands & Hire Consultants)</option>
-            <option value="Seller">🏭 Seller (Supply Materials, List Plots & Manage Orders)</option>
-            <option value="Consultant">📐 Consultant (Civil Engineer / Structural Consultant)</option>
+            <option value="Client" selected>🏗️ Client (Procure Materials & Hire Experts)</option>
+            <option value="Seller">🏭 Seller (Material Supplier & Land Lister)</option>
+            <option value="Consultant">📐 Consultant (Civil Engineer & Structural Expert)</option>
           </select>
           <div class="role-hint-text" id="roleHintText">
             ℹ️ <strong>Client Account:</strong> Browse products & lands, submit RFQ tenders, and book technical experts.
@@ -244,7 +228,7 @@
     <!-- Dynamic Sidebar Component -->
     <aside class="sidebar" id="appSidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-logo">I</div>
+        <img src="/assets/logo-icon.png" class="sidebar-logo" alt="Infrasphere" />
         <span class="brand-text">Infrasphere</span>
       </div>
 
