@@ -2591,5 +2591,46 @@ a {
   margin: 0 0 8px 0;
 }
 
+/* ================= Dashboard Navbar Highlighted Start Project CTA ================= */
+.nav-start-project-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  background: linear-gradient(135deg, #7C3AED 0%, #2563EB 100%);
+  color: #ffffff !important;
+  border: none;
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none !important;
+}
+
+.nav-start-project-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5);
+  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  color: #ffffff !important;
+}
+
+.nav-start-project-btn:active {
+  transform: scale(0.99);
+}
+
+@media (max-width: 640px) {
+  .nav-start-project-btn span {
+    display: none;
+  }
+  .nav-start-project-btn {
+    padding: 0 10px;
+  }
+}
+
 
 

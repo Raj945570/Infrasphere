@@ -161,7 +161,16 @@ async function handleRouting() {
       authPage.style.display = 'flex';
       toggleAuthMode(path === '/signup');
     }
-  } else if (path === '/start-project' || path === '/project' || path === '/start') {
+  } else if (path === '/apply' || path === '/start-project' || path === '/project' || path === '/start') {
+    // UX Rule: Never show restricted actions before login.
+    // If user is NOT logged in: redirect to /login
+    if (!token || !storedUser) {
+      showToast('Please sign in to start your project');
+      window.history.replaceState({}, '', '/login');
+      handleRouting();
+      return;
+    }
+    // If user IS logged in: show Start Your Project form
     if (startProjectPage) {
       startProjectPage.style.display = 'flex';
       const pForm = document.getElementById('projectForm');
@@ -1480,6 +1489,22 @@ window.goToSignup = function() {
   }
 };
 
+/* ================= Conditional Start Project Flow ================= */
+window.handleStartProjectClick = function(e) {
+  if (e) e.preventDefault();
+  const token = localStorage.getItem('infrasphere_token');
+  const storedUser = localStorage.getItem('user');
+  
+  if (token && storedUser) {
+    // If user IS logged in: redirect to /apply
+    navigateTo('/apply');
+  } else {
+    // If user is NOT logged in: redirect to /login
+    showToast('Please sign in to start your project');
+    navigateTo('/login');
+  }
+};
+
 /* ================= Premium "Start Your Project" Form Handler ================= */
 function initStartProjectForm() {
   const projectForm = document.getElementById('projectForm');
@@ -1511,18 +1536,23 @@ function initStartProjectForm() {
     });
   }
 
-  if (projectBackLink) {
-    projectBackLink.addEventListener('click', (e) => {
-      e.preventDefault();
+  function handleReturnNavigation(e) {
+    if (e) e.preventDefault();
+    const token = localStorage.getItem('infrasphere_token');
+    const storedUser = localStorage.getItem('user');
+    if (token && storedUser) {
+      navigateTo('/dashboard');
+    } else {
       navigateTo('/');
-    });
+    }
+  }
+
+  if (projectBackLink) {
+    projectBackLink.addEventListener('click', handleReturnNavigation);
   }
 
   if (btnReturnHome) {
-    btnReturnHome.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigateTo('/');
-    });
+    btnReturnHome.addEventListener('click', handleReturnNavigation);
   }
 }
 

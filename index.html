@@ -22,11 +22,10 @@
         <a href="#features">Features</a>
         <a href="#marketplace">Marketplace</a>
         <a href="#stats">Metrics</a>
-        <a href="/start-project" style="color: var(--primary); font-weight: 600;">Start Project</a>
       </nav>
       <div class="landing-auth-buttons">
         <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
-        <a href="/start-project" class="btn btn-primary btn-sm">Start Project</a>
+        <a href="/signup" class="btn btn-primary btn-sm">Create Free Account</a>
       </div>
     </header>
 
@@ -36,7 +35,7 @@
         <h1 class="landing-hero-title">Reimagining Indian Construction & Infrastructure</h1>
         <p class="landing-hero-subtitle">The all-in-one cloud SaaS marketplace for modern developers, material suppliers, and civil engineering consultants. Procure structural materials, publish tender RFQs, consult top structural engineers, and acquire RERA-approved commercial land parcels.</p>
         <div class="landing-hero-ctas">
-          <a href="/start-project" class="btn btn-primary">Start Your Project</a>
+          <button type="button" class="btn btn-primary" id="heroStartProjectBtn" onclick="handleStartProjectClick(event)">Start Your Project</button>
           <a href="/signup" class="btn btn-secondary">Create Free Account</a>
         </div>
       </div>
@@ -441,6 +440,12 @@
         </div>
 
         <div class="navbar-actions">
+          <!-- Start Project Primary CTA Button (Highlighted) -->
+          <a href="/apply" class="btn btn-primary btn-sm nav-start-project-btn" id="navStartProjectBtn">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Start Project</span>
+          </a>
+
           <!-- Light/Dark Mode Switcher -->
           <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
             <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
