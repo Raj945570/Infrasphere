@@ -5,7 +5,7 @@
     "email": "rajesh@infrasphere.in",
     "password": "$2b$10$6UD4tzSwZU0ii2fP/TAi7.ypBuYFgTfOn9cMPZiSff.O0REhi9vnu",
     "phone": "9876543210",
-    "role": "Consultant",
+    "role": "Client",
     "avatar": "",
     "companyName": "Sharma Infrastructure Private Limited",
     "gstin": "09AABC1234M1Z2",
@@ -82,5 +82,19 @@
     "address": "Regional Address, India",
     "bio": "Principal Infrastructure Contractor.",
     "createdAt": "2026-09-02T17:33:44.735Z"
+  },
+  {
+    "id": "user_1788374144243c1tf6",
+    "name": "Rajesh Sharma",
+    "email": "rajesh.client@infrasphere.in",
+    "password": "$2b$10$u0Nedk0TNKSoVl9qQ8XCNuxgk.0GUJ/7NjALKZLXpcs5cM4niLvfG",
+    "phone": "9876543210",
+    "role": "Client",
+    "avatar": "",
+    "companyName": "Rajesh Sharma Enterprises",
+    "gstin": "09AABC6619M1Z2",
+    "address": "Regional Address, India",
+    "bio": "Principal Infrastructure Contractor.",
+    "createdAt": "2026-09-02T18:35:44.243Z"
   }
 ]

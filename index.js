@@ -162,15 +162,32 @@ async function handleRouting() {
       toggleAuthMode(path === '/signup');
     }
   } else if (path === '/apply' || path === '/start-project' || path === '/project' || path === '/start') {
-    // UX Rule: Never show restricted actions before login.
-    // If user is NOT logged in: redirect to /login
+    // Route Protection:
+    // 1. IF not logged in: redirect to /login
     if (!token || !storedUser) {
       showToast('Please sign in to start your project');
       window.history.replaceState({}, '', '/login');
       handleRouting();
       return;
     }
-    // If user IS logged in: show Start Your Project form
+
+    // 2. IF role !== "client": show message "Only clients can create projects"
+    let userRole = '';
+    try {
+      const u = JSON.parse(storedUser);
+      userRole = (u.role || '').toLowerCase();
+    } catch (e) {
+      userRole = '';
+    }
+
+    if (userRole !== 'client') {
+      showToast('Only clients can create projects');
+      window.history.replaceState({}, '', '/dashboard');
+      handleRouting();
+      return;
+    }
+
+    // If user IS logged in AND role === 'client': show Start Your Project form
     if (startProjectPage) {
       startProjectPage.style.display = 'flex';
       const pForm = document.getElementById('projectForm');
@@ -685,6 +702,18 @@ function hydrateUserUI(user) {
     } else {
       navAvatar.textContent = initials;
     }
+  }
+
+  // Role-Based "Start Project" Button & Section Visibility (Client Only)
+  const isClient = (role || '').toLowerCase() === 'client';
+  const navStartProjectBtn = document.getElementById('navStartProjectBtn');
+  if (navStartProjectBtn) {
+    navStartProjectBtn.style.display = isClient ? 'inline-flex' : 'none';
+  }
+
+  const dashboardMyProjectsSection = document.getElementById('dashboardMyProjectsSection');
+  if (dashboardMyProjectsSection) {
+    dashboardMyProjectsSection.style.display = isClient ? 'block' : 'none';
   }
 
   // 2. Dynamic Sidebar Links Visibility
@@ -1497,7 +1526,21 @@ window.handleStartProjectClick = function(e) {
   const storedUser = localStorage.getItem('user');
   
   if (token && storedUser) {
-    // If user IS logged in: redirect to /apply
+    let userRole = '';
+    try {
+      const u = JSON.parse(storedUser);
+      userRole = (u.role || '').toLowerCase();
+    } catch (err) {
+      userRole = '';
+    }
+
+    if (userRole !== 'client') {
+      showToast('Only clients can create projects');
+      navigateTo('/dashboard');
+      return;
+    }
+
+    // If user IS logged in and is Client: redirect to /apply
     navigateTo('/apply');
   } else {
     // If user is NOT logged in: redirect to /login
@@ -1509,7 +1552,19 @@ window.handleStartProjectClick = function(e) {
 /* ================= Dashboard User Projects Loader ================= */
 async function loadUserProjects() {
   const token = localStorage.getItem('infrasphere_token');
-  if (!token) return;
+  const storedUser = localStorage.getItem('user');
+  if (!token || !storedUser) return;
+
+  let userRole = '';
+  try {
+    const u = JSON.parse(storedUser);
+    userRole = (u.role || '').toLowerCase();
+  } catch (e) {
+    userRole = '';
+  }
+
+  // Only load user projects if Client
+  if (userRole !== 'client') return;
 
   const container = document.getElementById('myProjectsContainer');
   const countBadge = document.getElementById('myProjectsCountBadge');
@@ -1638,9 +1693,23 @@ function initStartProjectForm() {
       hideProjectError();
 
       const token = localStorage.getItem('infrasphere_token');
-      if (!token) {
+      const storedUser = localStorage.getItem('user');
+      if (!token || !storedUser) {
         showToast('Please sign in to submit your project');
         navigateTo('/login');
+        return;
+      }
+
+      let userRole = '';
+      try {
+        const u = JSON.parse(storedUser);
+        userRole = (u.role || '').toLowerCase();
+      } catch (err) {
+        userRole = '';
+      }
+
+      if (userRole !== 'client') {
+        showProjectError('Only clients can create projects');
         return;
       }
 

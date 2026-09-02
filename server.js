@@ -361,8 +361,17 @@ function writeProjects(projects) {
 // Initialize projects database
 readProjects();
 
-// 4. Create Project (Start Project Form Submission)
+// 4. Create Project (Start Project Form Submission - Client Only)
 app.post('/api/projects', authenticateToken, (req, res) => {
+  const users = readUsers();
+  const user = users.find(u => u.id === req.userId);
+  const userRole = (user && user.role ? user.role : '').toLowerCase();
+
+  // Role Protection: Only CLIENT users can submit projects
+  if (userRole !== 'client') {
+    return res.status(403).json({ error: 'Only clients can create projects' });
+  }
+
   const { fullName, phone, projectType, customProjectType, budget, location, description } = req.body;
 
   // Validate required fields
@@ -413,8 +422,16 @@ app.post('/api/projects', authenticateToken, (req, res) => {
   });
 });
 
-// 5. Get Logged-in User's Projects
+// 5. Get Logged-in User's Projects (Client Role Only)
 app.get('/api/projects', authenticateToken, (req, res) => {
+  const users = readUsers();
+  const user = users.find(u => u.id === req.userId);
+  const userRole = (user && user.role ? user.role : '').toLowerCase();
+
+  if (userRole !== 'client') {
+    return res.json({ projects: [] });
+  }
+
   const projects = readProjects();
   // Return only logged-in user's projects
   const userProjects = projects.filter(p => p.userId === req.userId);
