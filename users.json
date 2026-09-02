@@ -68,5 +68,19 @@
     "address": "Regional Address, India",
     "bio": "Principal Infrastructure Contractor.",
     "createdAt": "2026-09-01T17:49:33.104Z"
+  },
+  {
+    "id": "user_17883704247353tsnq",
+    "name": "Raj Mishra",
+    "email": "movies734819@gmail.com",
+    "password": "$2b$10$sSGbv/Z6otIy.P1bF795MOKlHSm98f.i/xj0RTUjonpDYrT5Re1dS",
+    "phone": "6306531485",
+    "role": "Client",
+    "avatar": "",
+    "companyName": "Raj Mishra Enterprises",
+    "gstin": "09AABC6872M1Z2",
+    "address": "Regional Address, India",
+    "bio": "Principal Infrastructure Contractor.",
+    "createdAt": "2026-09-02T17:33:44.735Z"
   }
 ]
